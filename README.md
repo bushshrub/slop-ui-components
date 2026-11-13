@@ -14,7 +14,7 @@ with CSS variables, so it can take on your app's look.
 It is not on npm. Install it from GitHub, pinned to a release tag or a commit:
 
 ```sh
-pnpm add github:bushshrub/slop-ui-components#v0.2.0
+pnpm add github:bushshrub/slop-ui-components#v0.2.1
 pnpm add github:bushshrub/slop-ui-components#<commit>
 ```
 
