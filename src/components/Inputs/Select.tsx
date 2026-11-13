@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Key } from 'react-aria-components'
 import {
   Button,
@@ -18,8 +19,13 @@ export interface SelectOption<K extends Key = Key> {
   label: string
   /** Muted second line under the label. */
   description?: string
+  /** Shown before the label: an icon (any 16px SVG, e.g. lucide), logo or flag. */
+  icon?: ReactNode
   isDisabled?: boolean
 }
+
+/** Box around an option's icon, shared with ComboBox. */
+export const optionIcon = 'flex shrink-0 items-center text-muted [&_svg]:size-icon'
 
 export interface SelectProps<K extends Key = Key>
   extends Omit<AriaSelectProps<SelectOption<K>>, 'className' | 'children' | 'items' | 'value' | 'defaultValue' | 'onChange'>,
@@ -64,6 +70,7 @@ export function Select<K extends Key = Key>({
           isDisabled={option.isDisabled}
           className={cx(listOption, 'data-selected:font-medium')}
         >
+          {option.icon && <span className={optionIcon}>{option.icon}</span>}
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="truncate">{option.label}</span>
             {option.description && <span className="text-ui-sm leading-4 font-normal text-muted">{option.description}</span>}
@@ -97,9 +104,14 @@ export function Select<K extends Key = Key>({
               )
         }
       >
-        <SelectValue className={cx('truncate data-placeholder:text-subtle', !quiet && 'flex-1')}>
-          {/* Only the label in the trigger; the description belongs to the list */}
-          {({ selectedText, defaultChildren, isPlaceholder }) => (isPlaceholder ? defaultChildren : selectedText)}
+        <SelectValue<SelectOption<K>> className={cx('flex min-w-0 items-center gap-2 data-placeholder:text-subtle', !quiet && 'flex-1')}>
+          {/* Only the icon and label in the trigger; the description belongs to the list */}
+          {({ selectedText, selectedItems, defaultChildren, isPlaceholder }) => (
+            <>
+              {!isPlaceholder && selectedItems[0]?.icon && <span className={optionIcon}>{selectedItems[0].icon}</span>}
+              <span className="truncate">{isPlaceholder ? defaultChildren : selectedText}</span>
+            </>
+          )}
         </SelectValue>
         <ChevronDown aria-hidden className="size-icon shrink-0 text-muted" />
       </Button>

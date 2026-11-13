@@ -19,6 +19,8 @@ export const defaultStrings = {
   clearSearch: 'Clear search',
   noMatches: 'No matches',
   remove: (name: string) => `Remove ${name}`,
+  showPassword: 'Show password',
+  hidePassword: 'Hide password',
 
   // Toast
   notifications: 'Notifications',

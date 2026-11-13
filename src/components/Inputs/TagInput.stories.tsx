@@ -114,3 +114,13 @@ export const Behaviour_test: Story = {
     await expect(args.onChange).toHaveBeenLastCalledWith(['beta'])
   },
 }
+
+/** Without a visible label, `aria-label` names the input and the tag list. */
+export const AriaLabelTest: Story = {
+  name: 'aria-label (test)',
+  tags: ['!dev', '!autodocs'],
+  args: { label: undefined, 'aria-label': 'Skills', defaultValue: ['React'] },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('textbox', { name: 'Skills' })).toBeInTheDocument()
+  },
+}

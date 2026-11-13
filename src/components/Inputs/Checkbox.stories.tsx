@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn } from 'storybook/test'
-import { Checkbox } from './Checkbox'
+import { CheckIndicator, Checkbox } from './Checkbox'
 
 const meta = {
   title: 'Components/Inputs/Checkbox',
@@ -37,6 +37,17 @@ export const Gallery: Story = {
       <Checkbox isIndeterminate>Some selected</Checkbox>
       <Checkbox isInvalid>Accept the terms</Checkbox>
       <Checkbox isDisabled defaultSelected>Disabled</Checkbox>
+    </div>
+  ),
+}
+
+/** `CheckIndicator` is the box alone, for rows that are themselves the option. */
+export const Indicator: Story = {
+  render: () => (
+    <div className="flex items-center gap-3">
+      <CheckIndicator />
+      <CheckIndicator isSelected />
+      <CheckIndicator isIndeterminate />
     </div>
   ),
 }

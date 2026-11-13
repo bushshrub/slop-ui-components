@@ -77,3 +77,16 @@ export const PastedWrongKey: Story = {
     })
   },
 }
+
+/** A password field has a button that shows and hides what was typed. */
+export const Password: Story = {
+  args: { label: 'Password', type: 'password', defaultValue: 'hunter2' },
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByLabelText('Password')
+    await expect(input).toHaveAttribute('type', 'password')
+    await userEvent.click(canvas.getByRole('button', { name: 'Show password' }))
+    await expect(input).toHaveAttribute('type', 'text')
+    await userEvent.click(canvas.getByRole('button', { name: 'Hide password' }))
+    await expect(input).toHaveAttribute('type', 'password')
+  },
+}

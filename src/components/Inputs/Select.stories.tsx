@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Flag, Globe, Laptop } from 'lucide-react'
 import { expect, fn, screen, waitFor } from 'storybook/test'
 import { models } from '../../examples/sample-data'
 import { Select } from './Select'
@@ -99,5 +100,27 @@ export const VeryLongOptionNames: Story = {
       { id: 'long', label: 'claude-opus-5-5-20261101-extended-thinking-experimental-preview' },
       ...models,
     ],
+  },
+}
+
+/** Options with an icon: shown in the list and, once chosen, in the trigger. */
+export const WithIcons: Story = {
+  args: {
+    label: 'Region',
+    defaultValue: 'eu',
+    options: [
+      { id: 'eu', label: 'Europe', icon: <Globe /> },
+      { id: 'us', label: 'United States', icon: <Flag />, description: 'Lowest latency for the Americas' },
+      { id: 'local', label: 'This device', icon: <Laptop /> },
+    ],
+  },
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole('button', { name: /Region/ })
+    await expect(trigger.querySelector('svg.lucide-globe')).toBeInTheDocument()
+    await userEvent.click(trigger)
+    const option = await screen.findByRole('option', { name: /United States/ })
+    await expect(option.querySelector('svg.lucide-flag')).toBeInTheDocument()
+    await userEvent.click(option)
+    await waitFor(() => expect(trigger.querySelector('svg.lucide-flag')).toBeInTheDocument())
   },
 }

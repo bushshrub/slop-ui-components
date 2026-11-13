@@ -12,7 +12,7 @@ import {
 } from 'react-aria-components'
 import { cx } from '../../lib/cx'
 import { useStrings } from '../../lib/strings'
-import type { SelectOption } from './Select'
+import { optionIcon, type SelectOption } from './Select'
 import { FieldHelp, FieldLabel, fieldBox, fieldStack, listOption, listPopover, placeholder, type FieldChromeProps } from './field'
 
 export interface ComboBoxProps
@@ -94,6 +94,7 @@ export function ComboBox({
         >
           {(option) => (
             <ListBoxItem id={option.id} textValue={option.label} isDisabled={option.isDisabled} className={listOption}>
+              {option.icon && <span className={optionIcon}>{option.icon}</span>}
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate">
                   <Match text={option.label} />

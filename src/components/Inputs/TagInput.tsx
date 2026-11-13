@@ -102,6 +102,9 @@ export interface TagInputProps extends FieldChromeProps {
   isInvalid?: boolean
   /** Post each tag as a hidden input with this name, so the value travels with a form. */
   name?: string
+  /** Accessible name when there is no visible `label`. */
+  'aria-label'?: string
+  'aria-labelledby'?: string
   className?: string
 }
 
@@ -130,8 +133,11 @@ export function TagInput({
   isDisabled,
   isInvalid,
   name,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledby,
   className,
 }: TagInputProps) {
+  const fieldName = typeof label === 'string' ? label : ariaLabel
   const [innerTags, setInnerTags] = useState(defaultValue ?? [])
   const tags = value ?? innerTags
   const [draft, setDraft] = useState('')
@@ -218,6 +224,8 @@ export function TagInput({
       isInvalid={isInvalid || Boolean(error)}
       value={draft}
       onChange={onDraftChange}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
       className={fieldStack(className)}
     >
       {label && <FieldLabel>{label}</FieldLabel>}
@@ -234,7 +242,7 @@ export function TagInput({
         )}
       >
         <TagGroup
-          aria-label={typeof label === 'string' ? strings.tagsFor(label) : strings.tags}
+          aria-label={fieldName ? strings.tagsFor(fieldName) : strings.tags}
           items={items}
           onRemove={isDisabled ? undefined : removeKeys}
           isDisabled={isDisabled}

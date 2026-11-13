@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, fn } from 'storybook/test'
+import { Button as UIButton } from '../Button/Button'
 import { FileButton, FileDropZone, FileList, type FileDropZoneProps, type FileListItem } from './FileDrop'
 
 let nextId = 0
@@ -100,5 +101,23 @@ export const FileDrop_test: Story = {
     const text = new File(['x'], 'notes.txt', { type: 'text/plain' })
     await userEvent.setup({ applyAccept: false }).upload(input, [big, text])
     await expect(canvas.getByRole('alert')).toHaveTextContent('huge.pdf is larger than 10 MB. notes.txt is not a supported file type.')
+  },
+}
+
+/** Stored files given as plain data: a link to open each one, a row action, and no remove button. */
+export const StoredFiles: StoryObj<typeof FileList> = {
+  render: () => (
+    <FileList
+      className="w-[28rem] max-w-full"
+      files={[
+        { id: 'cv', name: 'cv-2026.pdf', size: 182_000, href: '#cv', actions: <UIButton size="sm" variant="ghost">Replace</UIButton> },
+        { id: 'letter', name: 'cover-letter.docx' },
+      ]}
+    />
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('link', { name: 'cv-2026.pdf' })).toHaveAttribute('href', '#cv')
+    await expect(canvas.getByText('cover-letter.docx')).toBeVisible()
+    await expect(canvas.queryByRole('button', { name: /Remove/ })).toBeNull()
   },
 }

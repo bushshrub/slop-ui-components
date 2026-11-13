@@ -1,6 +1,6 @@
 import { FileText, Upload, X } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
-import { DropZone, FileTrigger, Text, isFileDropItem, useLocale } from 'react-aria-components'
+import { DropZone, FileTrigger, Link, Text, isFileDropItem, useLocale } from 'react-aria-components'
 import { cx } from '../../lib/cx'
 import { useStrings, type UIStrings } from '../../lib/strings'
 import { Button, IconButton, type ButtonProps } from '../Button/Button'
@@ -221,52 +221,69 @@ export function FileButton({ onFiles, onReject, accept, allowsMultiple = true, m
   )
 }
 
-export interface FileListItem {
+/** A picked `file`, or a stored one described by `name` and `size`. */
+export type FileListItem = {
   id: string
-  file: File
   /** 0 to 100. Shows a thin bar under the name while set. */
   progress?: number
-}
+  /** Makes the name a link, e.g. to download a stored file. */
+  href?: string
+  /** Buttons for this row, before the remove button. */
+  actions?: ReactNode
+} & ({ file: File } | { file?: undefined; name: string; /** In bytes. */ size?: number })
 
 export interface FileListProps {
   files: FileListItem[]
-  onRemove: (id: string) => void
+  /** Adds a remove button to each row. */
+  onRemove?: (id: string) => void
   className?: string
 }
 
-/** Picked files as rows: name, size and a remove button, with an optional progress bar. */
+/** Files as rows: name, size and a remove button, with an optional progress bar. */
 export function FileList({ files, onRemove, className }: FileListProps) {
   const strings = useStrings()
   const { locale } = useLocale()
   if (files.length === 0) return null
   return (
     <ul aria-label={strings.files} className={cx('flex flex-col divide-y divide-divider rounded-lg border border-border', className)}>
-      {files.map(({ id, file, progress }) => (
-        <li key={id} className="flex min-h-row items-center gap-3 px-3 py-2">
-          <FileText aria-hidden className="size-icon shrink-0 text-muted" />
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <div className="flex items-baseline gap-2">
-              <span className="min-w-0 truncate text-ui leading-5 text-fg">{file.name}</span>
-              <span className="shrink-0 text-ui-sm leading-4 text-muted tabular-nums">{formatBytes(file.size, locale)}</span>
-            </div>
-            {progress != null && (
-              <div
-                role="progressbar"
-                aria-label={strings.uploading(file.name)}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={progress}
-                className="h-progress overflow-hidden rounded-full bg-track"
-              >
-                <div className="h-full rounded-full bg-progress transition-[width]" style={{ width: `${progress}%` }} />
+      {files.map(({ id, progress, href, actions, ...item }) => {
+        const { name, size } = item.file ?? item
+        return (
+          <li key={id} className="flex min-h-row items-center gap-3 px-3 py-2">
+            <FileText aria-hidden className="size-icon shrink-0 text-muted" />
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <div className="flex items-baseline gap-2">
+                {href !== undefined ? (
+                  <Link href={href} className="min-w-0 truncate rounded-xs text-ui leading-5 text-fg underline underline-offset-2 outline-none data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-focus">
+                    {name}
+                  </Link>
+                ) : (
+                  <span className="min-w-0 truncate text-ui leading-5 text-fg">{name}</span>
+                )}
+                {size != null && <span className="shrink-0 text-ui-sm leading-4 text-muted tabular-nums">{formatBytes(size, locale)}</span>}
               </div>
+              {progress != null && (
+                <div
+                  role="progressbar"
+                  aria-label={strings.uploading(name)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={progress}
+                  className="h-progress overflow-hidden rounded-full bg-track"
+                >
+                  <div className="h-full rounded-full bg-progress transition-[width]" style={{ width: `${progress}%` }} />
+                </div>
+              )}
+            </div>
+            {actions}
+            {onRemove && (
+              <IconButton size="sm" aria-label={strings.remove(name)} onPress={() => onRemove(id)}>
+                <X />
+              </IconButton>
             )}
-          </div>
-          <IconButton size="sm" aria-label={strings.remove(file.name)} onPress={() => onRemove(id)}>
-            <X />
-          </IconButton>
-        </li>
-      ))}
+          </li>
+        )
+      })}
     </ul>
   )
 }

@@ -49,7 +49,7 @@ import { Button, NumberField, Modal } from 'slop-ui-components'
 | Group      | Components                                                                                                  |
 | ---------- | ----------------------------------------------------------------------------------------------------------- |
 | Actions    | Button, IconButton, LinkButton                                                                              |
-| Inputs     | TextField, SearchField, NumberField, Select, ComboBox, Checkbox, Switch, Slider, SegmentedControl, RadioCards, TagInput, DatePicker, DateRangePicker, DateField, Calendar, FileDropZone, FileButton |
+| Inputs     | TextField, SearchField, NumberField, Select, ComboBox, Checkbox, CheckIndicator, Switch, Slider, SegmentedControl, RadioCards, TagInput, DatePicker, DateRangePicker, DateField, Calendar, FileDropZone, FileButton |
 | Overlays   | Menu, MenuList, Modal, ConfirmModal, `confirm()`, Sheet, Popover, Tooltip, Toggletip, CommandPalette                               |
 | Feedback   | Toast, Alert, Spinner, Skeleton, ProgressBar, Meter, StackedMeter, EmptyState                               |
 | Navigation | Tabs, Breadcrumbs, Pagination, Stepper                                                                      |
