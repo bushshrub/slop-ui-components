@@ -13,17 +13,24 @@ import { cx } from '../../lib/cx'
 import { SheetHeader, SheetPopover, useSheetMode, type SheetMode } from '../Sheet/Sheet'
 import { FieldHelp, FieldLabel, fieldBox, fieldStack, listOption, listPopover, type FieldChromeProps } from './field'
 
-export interface SelectOption {
-  id: Key
+export interface SelectOption<K extends Key = Key> {
+  id: K
   label: string
   /** Muted second line under the label. */
   description?: string
   isDisabled?: boolean
 }
 
-export interface SelectProps extends Omit<AriaSelectProps<SelectOption>, 'className' | 'children' | 'items'>, FieldChromeProps {
-  /** Choices, in display order. */
-  options: SelectOption[]
+export interface SelectProps<K extends Key = Key>
+  extends Omit<AriaSelectProps<SelectOption<K>>, 'className' | 'children' | 'items' | 'value' | 'defaultValue' | 'onChange'>,
+    FieldChromeProps {
+  /** Choices, in display order. Their `id` type is the type of `value` and of what `onChange` receives. */
+  options: readonly SelectOption<K>[]
+  /** Selected option id (controlled). */
+  value?: K | null
+  /** Initially selected option id (uncontrolled). */
+  defaultValue?: K | null
+  onChange?: (value: K) => void
   /** Open the list as a bottom sheet: `auto` under 768px. The label becomes the sheet title. */
   sheet?: SheetMode
   /**
@@ -35,7 +42,17 @@ export interface SelectProps extends Omit<AriaSelectProps<SelectOption>, 'classN
 }
 
 /** Single-choice dropdown built on react-aria Select. Use `value` / `onChange` for control. */
-export function Select({ label, description, errorMessage, options, sheet = 'auto', variant = 'field', className, ...props }: SelectProps) {
+export function Select<K extends Key = Key>({
+  label,
+  description,
+  errorMessage,
+  options,
+  sheet = 'auto',
+  variant = 'field',
+  className,
+  onChange,
+  ...props
+}: SelectProps<K>) {
   const quiet = variant === 'quiet'
   const asSheet = useSheetMode(sheet)
   const list = (
@@ -57,7 +74,11 @@ export function Select({ label, description, errorMessage, options, sheet = 'aut
     </ListBox>
   )
   return (
-    <AriaSelect {...props} isInvalid={props.isInvalid ?? (errorMessage ? true : undefined)} className={fieldStack(
+    <AriaSelect
+      {...props}
+      // The ids come from `options`, so a chosen key is always a K
+      onChange={(value) => value != null && onChange?.(value as K)}
+      isInvalid={props.isInvalid ?? (errorMessage ? true : undefined)} className={fieldStack(
         // -mr-2 on the wrapper (not the button, which would squeeze the value): the text, not the
         // hover fill, lines up with the right edge of the row
         cx(quiet && '-mr-2', className),

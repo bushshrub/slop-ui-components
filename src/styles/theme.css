@@ -1,0 +1,129 @@
+/* Everything but Tailwind itself: tokens, the touch variant, the theme and keyframes.
+   Import this after your own `@import "tailwindcss"` when another stylesheet already brings Tailwind in. */
+@import "./tokens.css";
+
+/* Touch sizing: real touch screens, and phone widths (also covers Storybook's mobile viewports). */
+@custom-variant touch {
+  @media (pointer: coarse) {
+    @slot;
+  }
+  @media (max-width: 767px) {
+    @slot;
+  }
+}
+
+/* Expose --ui-* tokens as Tailwind utilities (bg-surface, text-muted, rounded-md, font-serif ...).
+   `inline` keeps the var() reference, so overriding a --ui-* token at runtime rethemes everything. */
+@theme inline {
+  --color-bg: var(--ui-bg);
+  --color-sidebar: var(--ui-sidebar);
+  --color-surface: var(--ui-surface);
+  --color-popover: var(--ui-popover);
+  --color-hover: var(--ui-hover);
+  --color-selected: var(--ui-selected);
+  --color-track: var(--ui-track);
+  --color-field: var(--ui-field);
+  --color-field-hover: var(--ui-field-hover);
+  --color-field-border: var(--ui-field-border);
+  --color-button: var(--ui-button);
+  --color-button-hover: var(--ui-button-hover);
+  --color-button-fg: var(--ui-button-fg);
+  --color-border: var(--ui-border);
+  --color-border-strong: var(--ui-border-strong);
+  --color-divider: var(--ui-divider);
+  --color-fg: var(--ui-fg);
+  --color-muted: var(--ui-muted);
+  --color-subtle: var(--ui-subtle);
+  --color-primary: var(--ui-primary);
+  --color-primary-fg: var(--ui-primary-fg);
+  --color-accent: var(--ui-accent);
+  --color-accent-fg: var(--ui-accent-fg);
+  --color-interactive: var(--ui-interactive);
+  --color-interactive-fg: var(--ui-interactive-fg);
+  --color-knob: var(--ui-knob);
+  --color-focus: var(--ui-focus);
+  --color-danger: var(--ui-danger);
+  --color-danger-fg: var(--ui-danger-fg);
+  --color-info: var(--ui-info);
+  --color-link: var(--ui-link, var(--ui-interactive));
+  /* Tints resolve where they're used, so they follow nested [data-theme] blocks */
+  --color-success-soft: var(--ui-success-soft, color-mix(in srgb, var(--ui-success) 14%, transparent));
+  --color-warning-soft: var(--ui-warning-soft, color-mix(in srgb, var(--ui-warning) 14%, transparent));
+  --color-danger-soft: var(--ui-danger-soft, color-mix(in srgb, var(--ui-danger) 14%, transparent));
+  --color-info-soft: var(--ui-info-soft, color-mix(in srgb, var(--ui-info) 14%, transparent));
+  --color-accent-soft: var(--ui-accent-soft, color-mix(in srgb, var(--ui-accent) 14%, transparent));
+  --color-tooltip: var(--ui-tooltip, var(--ui-primary));
+  --color-tooltip-fg: var(--ui-tooltip-fg, var(--ui-primary-fg));
+  --color-progress: var(--ui-progress-fill, var(--ui-interactive));
+  /* Series colors for stacked bars and charts, in order */
+  --color-chart-1: var(--ui-chart-1, var(--ui-interactive));
+  --color-chart-2: var(--ui-chart-2, var(--ui-accent));
+  --color-chart-3: var(--ui-chart-3, var(--ui-success));
+  --color-chart-4: var(--ui-chart-4, var(--ui-warning));
+  --color-chart-5: var(--ui-chart-5, var(--ui-subtle));
+  --color-success: var(--ui-success);
+  --color-warning: var(--ui-warning);
+  --color-backdrop: var(--ui-backdrop);
+
+  --font-sans: var(--ui-font-sans);
+  --font-serif: var(--ui-font-serif);
+  --font-mono: var(--ui-font-mono);
+
+  --text-ui: var(--ui-text);
+  --text-ui-sm: var(--ui-text-sm);
+
+  /* h-control, size-icon, min-h-row ... */
+  --spacing-control-sm: var(--ui-control-sm);
+  --spacing-control: var(--ui-control);
+  --spacing-control-lg: var(--ui-control-lg);
+  --spacing-control-touch: var(--ui-control-touch);
+  --spacing-row: var(--ui-row);
+  --spacing-icon: var(--ui-icon);
+  --spacing-check: var(--ui-check);
+  --spacing-progress: var(--ui-progress);
+
+  --radius-sm: var(--ui-radius-sm);
+  --radius-md: var(--ui-radius-md);
+  --radius-popover: var(--ui-radius-popover);
+  --radius-lg: var(--ui-radius-lg);
+  --radius-button: var(--ui-radius-button);
+
+  --shadow-popover: var(--ui-shadow-popover);
+
+  --animate-pop-in: pop-in 120ms ease-out;
+  --animate-fade-in: fade-in 120ms ease-out;
+  --animate-slide-in: slide-in 180ms ease-out;
+  --animate-slide-up: slide-up 200ms ease-out;
+  --animate-drill-in: drill-in 160ms ease-out;
+  --animate-indeterminate: indeterminate 1.4s ease-in-out infinite;
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.98); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes slide-in {
+  from { transform: translateX(-100%); }
+}
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+}
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+@keyframes drill-in {
+  from { opacity: 0; transform: translateX(1.5rem); }
+}
+
+@layer base {
+  body {
+    background: var(--ui-bg);
+    color: var(--ui-fg);
+    font-family: var(--ui-font-sans);
+    font-size: var(--ui-text);
+    -webkit-font-smoothing: antialiased;
+  }
+}

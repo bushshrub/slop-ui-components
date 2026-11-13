@@ -252,11 +252,14 @@ export interface SidebarUserProps extends Omit<AriaButtonProps, 'className' | 'c
   detail?: ReactNode
   /** Image URL. Falls back to the first letter of `name`. */
   avatarUrl?: string
+  /** Show only the avatar. Defaults to the AppShell's collapsed state; set it to use the row outside an AppShell. */
+  collapsed?: boolean
 }
 
 /** Account row for the sidebar footer. A button, so it can be a MenuTrigger's trigger. */
-export function SidebarUser({ name, detail, avatarUrl, ...props }: SidebarUserProps) {
-  const { collapsed } = useSidebar()
+export function SidebarUser({ name, detail, avatarUrl, collapsed: collapsedProp, ...props }: SidebarUserProps) {
+  const shell = useContext(ShellContext)
+  const collapsed = collapsedProp ?? shell?.collapsed ?? false
   return (
     <AriaButton
       {...props}

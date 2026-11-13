@@ -19,7 +19,7 @@ const variants: Record<ButtonVariant, string> = {
   danger: 'bg-danger text-danger-fg data-hovered:opacity-90 data-pressed:opacity-80',
 }
 
-// Heights come from the --ui-control* tokens. On touch (coarse pointer or under 768px, see index.css) md and lg reach
+// Heights come from the --ui-control* tokens. On touch (coarse pointer or under 768px, see theme.css) md and lg reach
 // --ui-control-touch. sm grows to --ui-control and an invisible ::after extends its hit area, so dense rows keep their spacing.
 const coarseHit = 'relative touch:after:absolute touch:after:-inset-1'
 

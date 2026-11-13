@@ -2,22 +2,22 @@ import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties
 import { ToggleButton, ToggleButtonGroup, type Key } from 'react-aria-components'
 import { cx } from '../../lib/cx'
 
-export interface SegmentedOption {
-  id: Key
+export interface SegmentedOption<K extends Key = Key> {
+  id: K
   label: ReactNode
   /** 16px icon before the label. With `iconOnly`, pass `aria-label` text as `label`. */
   icon?: ReactNode
   isDisabled?: boolean
 }
 
-export interface SegmentedControlProps {
+export interface SegmentedControlProps<K extends Key = Key> {
   /** Two to five mutually exclusive choices. More than that wants a Select. */
-  options: SegmentedOption[]
+  options: readonly SegmentedOption<K>[]
   /** Selected option id (controlled). */
-  value?: Key
+  value?: K
   /** Initially selected option id (uncontrolled). */
-  defaultValue?: Key
-  onChange?: (value: Key) => void
+  defaultValue?: K
+  onChange?: (value: K) => void
   /** Visible label above the control. Otherwise pass `aria-label`. */
   label?: ReactNode
   'aria-label'?: string
@@ -35,7 +35,7 @@ export interface SegmentedControlProps {
  * One-of-few switcher that applies immediately (view mode, theme, time range).
  * Built on react-aria ToggleButtonGroup: arrow keys move, one segment is always selected.
  */
-export function SegmentedControl({
+export function SegmentedControl<K extends Key = Key>({
   options,
   value,
   defaultValue,
@@ -47,7 +47,7 @@ export function SegmentedControl({
   isDisabled,
   className,
   ...props
-}: SegmentedControlProps) {
+}: SegmentedControlProps<K>) {
   const labelId = useId()
   const [uncontrolled, setUncontrolled] = useState(defaultValue)
   const selected = value ?? uncontrolled
@@ -65,8 +65,9 @@ export function SegmentedControl({
       onSelectionChange={(keys) => {
         const [next] = keys
         if (next == null) return
-        setUncontrolled(next)
-        onChange?.(next)
+        // The ids come from `options`, so a chosen key is always a K
+        setUncontrolled(next as K)
+        onChange?.(next as K)
       }}
       className={cx(
         // max-w-full: never wider than the container; text segments shrink and truncate instead

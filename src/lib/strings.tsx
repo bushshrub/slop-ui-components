@@ -10,11 +10,13 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react'
 export const defaultStrings = {
   // Shared
   close: 'Close',
+  cancel: 'Cancel',
   back: 'Back',
   dismiss: 'Dismiss',
   loading: 'Loading',
   moreInfo: 'More info',
   search: 'Search',
+  clearSearch: 'Clear search',
   noMatches: 'No matches',
   remove: (name: string) => `Remove ${name}`,
 

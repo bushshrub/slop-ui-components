@@ -66,7 +66,7 @@ export const PlaygroundTest: Story = {
     await step('Esc closes it and focus returns to the trigger', async () => {
       await userEvent.keyboard('{Escape}')
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
-      await expect(canvas.getByRole('button', { name: 'Rename…' })).toHaveFocus()
+      await waitFor(() => expect(canvas.getByRole('button', { name: 'Rename…' })).toHaveFocus())
     })
   },
 }
@@ -105,6 +105,53 @@ export const DeleteChatTest: Story = {
       await expect(args.onOpenChange).toHaveBeenCalled()
       await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument())
     })
+  },
+}
+
+/** Test for an async `onConfirm`: buttons are held while it runs, a rejection keeps the modal open for a retry. */
+export const AsyncConfirmTest: Story = {
+  name: 'Async confirm (test)',
+  tags: ['!dev', '!autodocs'],
+  args: { title: 'Delete chat?' },
+  render: (args) => {
+    let attempts = 0
+    const onConfirm = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150))
+      if (++attempts === 1) throw new Error('offline')
+    }
+    return (
+      <DialogTrigger>
+        <Button variant="danger">Delete chat</Button>
+        <ConfirmModal title={args.title} destructive confirmLabel="Delete chat" onConfirm={onConfirm}>
+          <p className="m-0">This can’t be undone.</p>
+        </ConfirmModal>
+      </DialogTrigger>
+    )
+  },
+  play: async ({ canvas, userEvent, step }) => {
+    // The first attempt rejects on purpose; keep it from failing the run as an unhandled rejection
+    const swallow = (event: PromiseRejectionEvent) => event.preventDefault()
+    window.addEventListener('unhandledrejection', swallow)
+    try {
+      await userEvent.click(canvas.getByRole('button', { name: 'Delete chat' }))
+      const dialog = await screen.findByRole('alertdialog', { name: 'Delete chat?' })
+      const cancel = within(dialog).getByRole('button', { name: 'Cancel' })
+      const confirm = within(dialog).getByRole('button', { name: 'Delete chat' })
+      await step('Buttons are held while the action runs', async () => {
+        await userEvent.click(confirm)
+        await expect(cancel).toBeDisabled()
+      })
+      await step('A failed action leaves the modal open and usable', async () => {
+        await waitFor(() => expect(cancel).toBeEnabled())
+        await expect(dialog).toBeInTheDocument()
+      })
+      await step('Retrying succeeds and closes', async () => {
+        await userEvent.click(confirm)
+        await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument())
+      })
+    } finally {
+      window.removeEventListener('unhandledrejection', swallow)
+    }
   },
 }
 

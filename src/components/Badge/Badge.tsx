@@ -6,7 +6,7 @@ export type BadgeTone = 'neutral' | 'accent' | 'info' | 'success' | 'warning' | 
 // Soft badges keep text-fg on the tint: status colors as text fall under 4.5:1 on their own tint in the light theme
 // (accent 3.6, success 3.9, warning 4.0, info 4.4), so the tone is carried by the tint and an optional dot instead.
 const soft: Record<BadgeTone, string> = {
-  neutral: 'bg-button text-muted',
+  neutral: 'bg-button text-fg',
   accent: 'bg-accent-soft text-fg',
   info: 'bg-info-soft text-fg',
   success: 'bg-success-soft text-fg',
@@ -89,7 +89,7 @@ export function CountBadge({ count, max = 99, showZero, tone = 'accent', classNa
       {...props}
       className={cx(
         'inline-flex h-[calc(var(--ui-icon)+0.125rem)] min-w-[calc(var(--ui-icon)+0.125rem)] shrink-0 items-center justify-center rounded-full px-1.5 font-sans text-ui-sm font-medium tabular-nums',
-        tone === 'accent' ? 'bg-accent text-accent-fg' : 'bg-button text-muted',
+        tone === 'accent' ? 'bg-accent text-accent-fg' : 'bg-button text-fg',
         className,
       )}
     >

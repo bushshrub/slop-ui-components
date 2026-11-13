@@ -6,6 +6,7 @@ import {
   Table as AriaTable,
   TableBody as AriaTableBody,
   TableHeader as AriaTableHeader,
+  type Key,
   type CellProps as AriaCellProps,
   type ColumnProps as AriaColumnProps,
   type RowProps,
@@ -103,7 +104,10 @@ export interface CellProps extends Omit<AriaCellProps, 'className'> {
   className?: string
 }
 
-/** Body cell. Text truncates; use `numeric` and `mono` instead of styling numbers by hand. */
+/**
+ * Body cell. One line that truncates; use `numeric` and `mono` instead of styling numbers by hand.
+ * For taller content pass `className="h-auto py-2 whitespace-normal"`.
+ */
 export function Cell({ align, mono, numeric, className, ...props }: CellProps) {
   return (
     <AriaCell
@@ -116,5 +120,80 @@ export function Cell({ align, mono, numeric, className, ...props }: CellProps) {
         className,
       )}
     />
+  )
+}
+
+// Same components under names that do not collide with an app's own Row, Cell or Column
+export { Row as TableRow, Cell as TableCell, Column as TableColumn }
+
+export interface DataTableColumn<T> {
+  id: string
+  /** Column heading. */
+  header: ReactNode
+  /** What the column shows for a row. */
+  cell: (row: T) => ReactNode
+  align?: 'start' | 'end'
+  /** Tabular numerals, right-aligned (heading too). */
+  numeric?: boolean
+  /** Monospace, muted. */
+  mono?: boolean
+  /** Makes the heading a sort button. Sorting itself is yours: see `sortDescriptor` / `onSortChange`. */
+  allowsSorting?: boolean
+  /** The column that names the row for screen readers. Defaults to the first column. */
+  isRowHeader?: boolean
+  /** Fixed width for the column, e.g. `w-28`. */
+  className?: string
+  /** Extra classes for this column's body cells. */
+  cellClassName?: string
+}
+
+export interface DataTableProps<T> extends Omit<TableProps, 'children'> {
+  columns: readonly DataTableColumn<T>[]
+  rows: readonly T[]
+  /** Stable id for a row. */
+  rowKey: (row: T) => Key
+  /** Makes rows pressable (click, Enter). */
+  onRowPress?: (row: T) => void
+  /** Makes rows links. */
+  rowHref?: (row: T) => string | undefined
+  /** Shown in place of the rows when there are none. */
+  emptyState?: ReactNode
+}
+
+/**
+ * Table from an array of column definitions and an array of rows: the short form for plain data lists.
+ * Takes every `Table` prop (`aria-label`, `sortDescriptor`, `selectionMode` ...). Compose `Table` by hand
+ * when rows differ from each other or cells need their own props.
+ */
+export function DataTable<T>({ columns, rows, rowKey, onRowPress, rowHref, emptyState, ...props }: DataTableProps<T>) {
+  const rowHeader = columns.find((c) => c.isRowHeader)?.id ?? columns[0]?.id
+  return (
+    <Table {...props}>
+      <TableHeader>
+        {columns.map((c) => (
+          <Column
+            key={c.id}
+            id={c.id}
+            isRowHeader={c.id === rowHeader}
+            allowsSorting={c.allowsSorting}
+            align={c.align ?? (c.numeric ? 'end' : 'start')}
+            className={c.className}
+          >
+            {c.header}
+          </Column>
+        ))}
+      </TableHeader>
+      <TableBody emptyState={emptyState}>
+        {rows.map((row) => (
+          <Row key={rowKey(row)} id={rowKey(row)} href={rowHref?.(row)} onAction={onRowPress && (() => onRowPress(row))}>
+            {columns.map((c) => (
+              <Cell key={c.id} align={c.align} numeric={c.numeric} mono={c.mono} className={c.cellClassName}>
+                {c.cell(row)}
+              </Cell>
+            ))}
+          </Row>
+        ))}
+      </TableBody>
+    </Table>
   )
 }

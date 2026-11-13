@@ -185,6 +185,8 @@ export interface MenuItemProps extends Omit<AriaMenuItemProps, 'className' | 'ch
   icon?: ReactNode
   /** Keyboard shortcut shown at the right, e.g. `⇧⌘,`. Display only; wire the key yourself. */
   shortcut?: string
+  /** Muted text at the right of the label, e.g. a count or "3d ago". Read out after the label. */
+  detail?: ReactNode
   /** Muted second line under the label. */
   description?: ReactNode
   /** `danger` colors the label and icon for destructive actions. */
@@ -198,7 +200,7 @@ export interface MenuItemProps extends Omit<AriaMenuItemProps, 'className' | 'ch
 }
 
 /** One row in a Menu. Pass `href` to make it a link; inside SubmenuTrigger it shows a chevron. */
-export function MenuItem({ icon, shortcut, description, tone = 'default', external, children, ...props }: MenuItemProps) {
+export function MenuItem({ icon, shortcut, detail, description, tone = 'default', external, children, ...props }: MenuItemProps) {
   const isExternal = external ?? props.target === '_blank'
   return (
     <AriaMenuItem
@@ -224,9 +226,17 @@ export function MenuItem({ icon, shortcut, description, tone = 'default', extern
             </span>
           )}
           <span className="flex min-w-0 flex-1 flex-col">
-            <Text slot="label" className="truncate">
-              {children}
-            </Text>
+            {detail ? (
+              // Inside the label, so the detail is part of the item's accessible name
+              <Text slot="label" className="flex min-w-0 items-baseline gap-4">
+                <span className="min-w-0 flex-1 truncate">{children}</span>
+                <span className="shrink-0 text-ui-sm text-muted">{detail}</span>
+              </Text>
+            ) : (
+              <Text slot="label" className="truncate">
+                {children}
+              </Text>
+            )}
             {description && (
               <Text slot="description" className="text-ui-sm leading-4 text-muted">
                 {description}
@@ -260,12 +270,27 @@ export function MenuSection({ title, children, ...props }: MenuSectionProps) {
   )
 }
 
+export interface MenuListProps<T> extends Omit<AriaMenuProps<T>, 'className'> {
+  className?: string
+}
+
+/**
+ * Just the list of items, without the popover or sheet around it: for a menu inside a popover that
+ * something else provides. Takes the same items as `Menu`. No search field, header, footer or sheet.
+ */
+export function MenuList<T extends object>({ className, ...props }: MenuListProps<T>) {
+  return <AriaMenu {...props} className={cx('min-h-0 overflow-auto p-1.5 font-sans text-fg outline-none', className)} />
+}
+
 /** Hairline between groups of items. */
 export function MenuSeparator() {
   return <Separator className="-mx-1.5 my-1.5 border-t border-border" />
 }
 
-/** Non-interactive header row, e.g. the signed-in email at the top of an account menu. */
+/**
+ * Non-interactive header row, e.g. the signed-in email at the top of an account menu. For anything
+ * richer than a line of text, use the Menu's `header` prop, which sits outside the item list.
+ */
 export function MenuHeader({ children }: { children: ReactNode }) {
   return <Header className="truncate px-2 pt-1 pb-1.5 text-ui leading-5 text-muted">{children}</Header>
 }

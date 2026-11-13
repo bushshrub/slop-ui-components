@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, waitFor } from 'storybook/test'
 import { Bell, Palette, Settings2 } from 'lucide-react'
-import { Tab, TabList, TabPanel, Tabs } from './Tabs'
+import { Tab, TabList, TabPanel, Tabs, TabSection } from './Tabs'
 
 const meta = {
   title: 'Components/Navigation/Tabs',
@@ -61,6 +61,51 @@ export const Vertical: Story = {
 }
 
 /** Test for Horizontal: runs in Vitest and Run tests, hidden from the sidebar and docs so the story loads still. */
+/** `TabSection` groups a vertical list: a divider before each group and an optional heading. */
+export const Sections: Story = {
+  name: 'Vertical with sections',
+  args: { orientation: 'vertical' },
+  render: (args) => (
+    <Tabs {...args} className="h-80">
+      <TabList aria-label="Settings">
+        <TabSection>
+          <Tab id="account">Account</Tab>
+          <Tab id="appearance">Appearance</Tab>
+        </TabSection>
+        <TabSection title="Workspace">
+          <Tab id="members">Members</Tab>
+          <Tab id="billing">Billing</Tab>
+        </TabSection>
+        <TabSection title="Admin">
+          <Tab id="limits">Limits</Tab>
+        </TabSection>
+      </TabList>
+      {['account', 'appearance', 'members', 'billing', 'limits'].map((id) => (
+        <TabPanel key={id} id={id} className="p-4 text-ui">
+          {id}
+        </TabPanel>
+      ))}
+    </Tabs>
+  ),
+}
+
+/** Test for Vertical with sections: hidden from the sidebar and docs. */
+export const SectionsTest: Story = {
+  ...Sections,
+  name: 'Vertical with sections (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas, userEvent }) => {
+    // Headings are drawn by the tabs, so they must not leak into the tab names
+    const members = canvas.getByRole('tab', { name: 'Members' })
+    await expect(getComputedStyle(members, '::after').content).toContain('Workspace')
+    await expect(canvas.getAllByRole('tab')).toHaveLength(5)
+    // Arrow keys cross section boundaries as one list
+    await userEvent.click(canvas.getByRole('tab', { name: 'Appearance' }))
+    await userEvent.keyboard('{ArrowDown}')
+    await expect(members).toHaveAttribute('aria-selected', 'true')
+  },
+}
+
 export const HorizontalTest: Story = {
   ...Horizontal,
   name: 'Horizontal (test)',

@@ -7,7 +7,7 @@ export interface KbdProps extends Omit<HTMLAttributes<HTMLElement>, 'className'>
   className?: string
 }
 
-const cap = 'inline-flex min-w-5 items-center justify-center rounded-sm bg-button px-1 font-sans text-ui-sm leading-4 text-muted'
+const cap = 'inline-flex min-w-5 items-center justify-center rounded-sm bg-button px-1 font-sans text-ui-sm leading-4 text-fg'
 
 /** Keyboard key hint. Pass a single key or combo as children, or `keys` for one cap per key. */
 export function Kbd({ keys, className, children, ...props }: KbdProps) {

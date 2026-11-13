@@ -41,7 +41,8 @@ export interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'child
 /**
  * Centered dialog over a dimmed backdrop. Use inside `DialogTrigger` with a Button, or control it
  * with `isOpen` / `onOpenChange`. Body scrolls; header and footer stay put. Fills the screen under
- * 768px, except `alertdialog`, which stays a card.
+ * 768px, except `alertdialog`, which stays a card. The body is padded and spaces its children, so
+ * content inside (a form, say) should not add its own outer padding.
  */
 export function Modal({
   title,
@@ -122,7 +123,11 @@ export { DialogTrigger }
 export interface ConfirmModalProps extends Omit<ModalProps, 'footer' | 'role' | 'children'> {
   /** Label of the confirming button, e.g. "Delete chat". Say what happens. */
   confirmLabel: string
-  /** Called when the user confirms. If it returns a promise, the modal closes after it resolves. */
+  /**
+   * Called when the user confirms. If it returns a promise, both buttons are held until it settles and the
+   * modal closes after it resolves. If it rejects, the modal stays open so the user can retry or cancel;
+   * report the error yourself (catch it inside `onConfirm`, e.g. to show a toast).
+   */
   onConfirm: () => void | Promise<void>
   /** Uses the danger button and alertdialog role. */
   destructive?: boolean
@@ -131,6 +136,8 @@ export interface ConfirmModalProps extends Omit<ModalProps, 'footer' | 'role' | 
 
 /** Two-button confirmation. Closes after `onConfirm` resolves. */
 export function ConfirmModal({ confirmLabel, onConfirm, destructive, children, size = 'sm', ...props }: ConfirmModalProps) {
+  const strings = useStrings()
+  const [pending, setPending] = useState(false)
   return (
     <Modal
       {...props}
@@ -138,14 +145,22 @@ export function ConfirmModal({ confirmLabel, onConfirm, destructive, children, s
       role={destructive ? 'alertdialog' : 'dialog'}
       footer={(close) => (
         <>
-          <Button onPress={close}>
-            Cancel
+          <Button onPress={close} isDisabled={pending}>
+            {strings.cancel}
           </Button>
           <Button
             variant={destructive ? 'danger' : 'primary'}
+            // Not disabled while pending: a disabled button would drop keyboard focus out of the dialog
+            className={pending ? 'cursor-progress opacity-60' : undefined}
             onPress={async () => {
-              await onConfirm()
-              close()
+              if (pending) return
+              setPending(true)
+              try {
+                await onConfirm()
+                close()
+              } finally {
+                setPending(false)
+              }
             }}
           >
             {confirmLabel}

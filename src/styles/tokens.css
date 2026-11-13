@@ -110,8 +110,9 @@
   --ui-shadow-popover: 0 8px 24px rgb(0 0 0 / 0.4);
 }
 
+/* :where() keeps this at the specificity of a plain :root, so a later `:root { --ui-accent: … }` still wins */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
     --ui-bg: #262624;
     --ui-sidebar: #1f1e1d;
@@ -188,6 +189,7 @@
      --ui-success-soft / --ui-warning-soft / --ui-danger-soft / --ui-info-soft / --ui-accent-soft:
        tinted fills for alerts and badges (status color at ~14%)
      --ui-tooltip / --ui-tooltip-fg: tooltip fill and text (default: primary / primary-fg)
+     --ui-link: text links, via the `text-link` class (default: interactive)
      --ui-progress-fill: progress bar fill (default: interactive)
      --ui-chart-1 … --ui-chart-5: stacked bar / chart series, in order
        (default: interactive, accent, success, warning, subtle) */

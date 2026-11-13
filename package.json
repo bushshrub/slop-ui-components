@@ -53,7 +53,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/index.css",
-    "./tokens.css": "./src/styles/tokens.css",
+    "./theme.css": "./src/styles/theme.css",
+    "./tokens.css":"./src/styles/tokens.css",
     "./fonts.css": "./src/styles/fonts.css"
   },
   "sideEffects": [

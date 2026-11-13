@@ -28,6 +28,18 @@ it (Vite does this out of the box).
 @source "../node_modules/slop-ui-components/src";   /* let Tailwind see the component classes */
 ```
 
+The `@source` path is relative to your CSS file: from `src/app.css` it is `"../node_modules/slop-ui-components/src"`,
+from a stylesheet at the project root `"./node_modules/slop-ui-components/src"`.
+
+If your app already imports Tailwind (or another package does it for you), keep that import and take the theme
+without it:
+
+```css
+@import "tailwindcss";
+@import "slop-ui-components/theme.css";    /* the tokens and the theme, no Tailwind import */
+@source "../node_modules/slop-ui-components/src";
+```
+
 ```tsx
 import { Button, NumberField, Modal } from 'slop-ui-components'
 ```
@@ -37,12 +49,12 @@ import { Button, NumberField, Modal } from 'slop-ui-components'
 | Group      | Components                                                                                                  |
 | ---------- | ----------------------------------------------------------------------------------------------------------- |
 | Actions    | Button, IconButton                                                                                          |
-| Inputs     | TextField, NumberField, Select, ComboBox, Checkbox, Switch, Slider, SegmentedControl, RadioCards, TagInput, DatePicker, DateRangePicker, DateField, Calendar, FileDropZone, FileButton |
-| Overlays   | Menu, Modal, ConfirmModal, Sheet, Popover, Tooltip, Toggletip, CommandPalette                               |
+| Inputs     | TextField, SearchField, NumberField, Select, ComboBox, Checkbox, Switch, Slider, SegmentedControl, RadioCards, TagInput, DatePicker, DateRangePicker, DateField, Calendar, FileDropZone, FileButton |
+| Overlays   | Menu, MenuList, Modal, ConfirmModal, `confirm()`, Sheet, Popover, Tooltip, Toggletip, CommandPalette                               |
 | Feedback   | Toast, Alert, Spinner, Skeleton, ProgressBar, Meter, StackedMeter, EmptyState                               |
 | Navigation | Tabs, Breadcrumbs, Pagination, Stepper                                                                      |
-| Layout     | AppShell, Sidebar, Card, Carousel, Disclosure, Heading, PageHeader                                          |
-| Data       | Table, Badge, CountBadge, Kbd                                                                               |
+| Layout     | AppShell, Sidebar, Card, SettingsGroup, SettingsRow, Carousel, Disclosure, Heading, PageHeader                                          |
+| Data       | Table, DataTable, Badge, CountBadge, Kbd                                                                               |
 
 Storybook has a page for each, plus larger examples (a chat app, a settings dialog):
 
@@ -58,6 +70,16 @@ or `"dark"` on any ancestor, or leave it unset to follow the OS. Override variab
 
 ```css
 :root { --ui-accent: #2f5fd0; --ui-radius-md: 6px; }
+```
+
+If your app has its own default theme rather than following the OS, set `data-theme` on `<html>` yourself (in
+`index.html` too, so the first paint is right). If it already has its own tokens, point ours at them after the import:
+
+```css
+:root {
+  --ui-bg: var(--app-bg);
+  --ui-fg: var(--app-fg);
+}
 ```
 
 ## Languages

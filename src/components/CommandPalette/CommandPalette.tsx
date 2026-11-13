@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
 import {
   Autocomplete,
   Dialog,
@@ -26,6 +26,24 @@ export interface CommandPaletteProps<T extends object = object> extends Omit<Mod
   emptyMessage?: ReactNode
   /** Close after an item runs. Default true. */
   closeOnAction?: boolean
+  /** The search text (controlled). Leave unset to let the palette keep it. */
+  query?: string
+  onQueryChange?: (query: string) => void
+  /**
+   * Decides whether an item matches the query. Receives the item's text (label and keywords) and the query.
+   * Default: case-insensitive "contains". Pass `false` to show every item as given, for results you
+   * search or rank yourself (a server search, fuzzy ranking): drive them from `onQueryChange`.
+   */
+  filter?: ((text: string, query: string) => boolean) | false
+  /**
+   * Key presses in the search field, before the palette handles them. Call `preventDefault()` to take a
+   * key over, e.g. Left / Right at the ends of the text to step through scopes shown in `toolbar`.
+   */
+  onInputKeyDown?: (event: ReactKeyboardEvent<HTMLInputElement>) => void
+  /** Row between the field and the list, e.g. scope tabs or filter chips. */
+  toolbar?: ReactNode
+  /** Muted line above the items, e.g. "Searching…". */
+  status?: ReactNode
   /** Hint row under the list, e.g. the keys to navigate with. */
   footer?: ReactNode
   /** Runs with the `id` of the chosen item, whether it is static or from `items`. */
@@ -48,6 +66,12 @@ export function CommandPalette<T extends object = object>({
   placeholder,
   emptyMessage,
   closeOnAction = true,
+  query,
+  onQueryChange,
+  filter,
+  onInputKeyDown,
+  toolbar,
+  status,
   footer,
   onAction,
   items,
@@ -74,7 +98,11 @@ export function CommandPalette<T extends object = object>({
                 if (closeOnAction) close()
               }}
             >
-              <Autocomplete filter={contains}>
+              <Autocomplete
+                inputValue={query}
+                onInputChange={onQueryChange}
+                filter={filter === false ? undefined : (filter ?? contains)}
+              >
                 <SearchField
                   aria-label={searchPlaceholder}
                   autoFocus
@@ -82,10 +110,18 @@ export function CommandPalette<T extends object = object>({
                 >
                   <Search aria-hidden className="size-icon shrink-0 text-muted" />
                   <Input
+                    // Capture phase: ahead of react-aria's own key handling on the field
+                    onKeyDownCapture={onInputKeyDown}
                     placeholder={searchPlaceholder}
                     className="h-control-lg min-w-0 flex-1 bg-transparent text-base text-fg outline-none placeholder:text-subtle [&::-webkit-search-cancel-button]:hidden"
                   />
                 </SearchField>
+                {toolbar && <div className="flex shrink-0 items-center gap-1 border-b border-divider px-3 py-1.5">{toolbar}</div>}
+                {status && (
+                  <div role="status" className="shrink-0 px-3.5 pt-2.5 text-ui-sm text-muted">
+                    {status}
+                  </div>
+                )}
                 <AriaMenu
                   aria-label={strings.commands}
                   items={items}
@@ -108,10 +144,12 @@ export function CommandPalette<T extends object = object>({
   )
 }
 
-export interface CommandItemProps extends Omit<MenuItemProps, 'textValue' | 'id' | 'onAction' | 'children'> {
+export interface CommandItemProps extends Omit<MenuItemProps, 'id' | 'onAction' | 'children'> {
   id: Key
-  /** The command's name. It is what the user sees and searches. */
-  children: string
+  /** The command's name. A string is also what the search matches; for other content (highlighted matches) set `textValue`. */
+  children: ReactNode
+  /** Plain-text name, for search and screen readers, when `children` is not a string. */
+  textValue?: string
   /** Extra words the search matches, e.g. `['preferences']` for "Open settings". Not shown. */
   keywords?: string[]
   /** Runs when the item is chosen, before the palette's `onAction`. */
@@ -119,13 +157,14 @@ export interface CommandItemProps extends Omit<MenuItemProps, 'textValue' | 'id'
 }
 
 /** One command in a CommandPalette. Its `onAction` runs first, then the palette's `onAction(id)`. */
-export function CommandItem({ id, children, keywords, onAction, ...props }: CommandItemProps) {
+export function CommandItem({ id, children, textValue, keywords, onAction, ...props }: CommandItemProps) {
   const runAction = useContext(CommandPaletteContext)
+  const name = textValue ?? (typeof children === 'string' ? children : '')
   return (
     <MenuItem
       {...props}
       id={id}
-      textValue={[children, ...(keywords ?? [])].join(' ')}
+      textValue={[name, ...(keywords ?? [])].join(' ')}
       onAction={() => {
         onAction?.()
         runAction?.(id)

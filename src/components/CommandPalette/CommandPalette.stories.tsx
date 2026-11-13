@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { FolderOpen, MessageSquarePlus, Plus, Settings, SunMoon } from 'lucide-react'
 import { expect, fn, screen, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button'
+import { SegmentedControl } from '../Inputs/SegmentedControl'
 import { Kbd } from '../Kbd/Kbd'
 import { CommandItem, CommandPalette, CommandSection, useCommandPaletteShortcut, type CommandPaletteProps } from './CommandPalette'
 
@@ -173,5 +174,91 @@ export const Empty: Story = {
       await waitFor(() => expect(within(dialog).queryByRole('menuitem', { name: 'New chat' })).not.toBeInTheDocument())
       await expect(within(dialog).getByText('No matching commands')).toBeVisible()
     })
+  },
+}
+
+const messages = [
+  { id: 'm1', text: 'Lorem ipsum dolor sit amet', when: '3d ago' },
+  { id: 'm2', text: 'Consectetur adipiscing elit', when: '1w ago' },
+  { id: 'm3', text: 'Sed do eiusmod tempor', when: '2w ago' },
+]
+
+const scopes = [
+  { id: 'all', label: 'All' },
+  { id: 'week', label: 'This week' },
+] as const
+type Scope = (typeof scopes)[number]['id']
+
+/** Wraps the part of `text` that matches `query` in a mark. */
+function Highlight({ text, query }: { text: string; query: string }) {
+  const at = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1
+  if (at < 0) return text
+  return (
+    <>
+      {text.slice(0, at)}
+      <mark className="bg-accent-soft text-fg">{text.slice(at, at + query.length)}</mark>
+      {text.slice(at + query.length)}
+    </>
+  )
+}
+
+function OwnSearchDemo(args: CommandPaletteProps) {
+  const [query, setQuery] = useState('')
+  const [scope, setScope] = useState<Scope>('all')
+  // Stands in for a server search or a fuzzy ranker: the palette shows whatever this returns
+  const results = messages.filter((m) => m.text.toLowerCase().includes(query.toLowerCase()) && (scope === 'all' || m.when === '3d ago'))
+  return (
+    <PaletteDemo
+      {...args}
+      query={query}
+      onQueryChange={setQuery}
+      filter={false}
+      toolbar={<SegmentedControl aria-label="Scope" size="sm" options={scopes} value={scope} onChange={setScope} />}
+      // Left / Right at the ends of the text step through the scopes; elsewhere they move the caret
+      onInputKeyDown={(event) => {
+        const { selectionStart, selectionEnd, value } = event.currentTarget
+        const step = event.key === 'ArrowRight' && selectionStart === value.length ? 1 : event.key === 'ArrowLeft' && selectionEnd === 0 ? -1 : 0
+        if (!step) return
+        event.preventDefault()
+        const at = scopes.findIndex((s) => s.id === scope)
+        setScope(scopes[(at + step + scopes.length) % scopes.length].id)
+      }}
+      status={query ? `${results.length} of ${messages.length} messages` : undefined}
+    >
+      {results.map((m) => (
+        <CommandItem key={m.id} id={m.id} textValue={m.text} detail={m.when}>
+          <Highlight text={m.text} query={query} />
+        </CommandItem>
+      ))}
+    </PaletteDemo>
+  )
+}
+
+/**
+ * Results you search or rank yourself: `filter={false}` turns the built-in filter off, `query` /
+ * `onQueryChange` drive your search, `status` reports on it, and items can highlight the match.
+ * `toolbar` holds scope buttons, and `onInputKeyDown` lets Left / Right step through them.
+ */
+export const OwnSearch: Story = {
+  name: 'Your own search',
+  render: (args) => <OwnSearchDemo {...args} />,
+}
+
+/** Test for Your own search: hidden from the sidebar and docs. */
+export const OwnSearchTest: Story = {
+  ...OwnSearch,
+  name: 'Your own search (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: /Open command palette/ }))
+    const dialog = await screen.findByRole('dialog', { name: 'Command palette' })
+    await userEvent.keyboard('ipsum')
+    await waitFor(() => expect(within(dialog).getAllByRole('menuitem')).toHaveLength(1))
+    await expect(within(dialog).getByText('1 of 3 messages')).toBeVisible()
+    await expect(within(dialog).getByText('ipsum').tagName).toBe('MARK')
+    await expect(within(dialog).getByText('3d ago')).toBeVisible()
+    // Right at the end of the text steps the scope instead of moving the caret
+    await userEvent.keyboard('{ArrowRight}')
+    await waitFor(() => expect(within(dialog).getByRole('radio', { name: 'This week' })).toBeChecked())
   },
 }

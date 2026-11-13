@@ -7,6 +7,7 @@ import { SegmentedControl } from '../components/Inputs/SegmentedControl'
 import { Select } from '../components/Inputs/Select'
 import { TextField } from '../components/Inputs/TextField'
 import { ConfirmModal, DialogTrigger, Modal, type ModalProps } from '../components/Modal/Modal'
+import { SettingsRow } from '../components/Settings/Settings'
 import { Tab, TabList, TabPanel, Tabs } from '../components/Tabs/Tabs'
 import { user } from './sample-data'
 
@@ -50,19 +51,19 @@ export function SettingsDialog(props: Omit<ModalProps, 'title' | 'children'>) {
         </TabList>
 
         <Panel id="general">
-          <Row label="What should we call you?" description="Used in greetings and shared chats.">
+          <SettingsRow label="What should we call you?" description="Used in greetings and shared chats.">
             <TextField aria-label="What should we call you?" defaultValue={user.name} className="w-full sm:w-56" />
-          </Row>
-          <Row label="Language">
+          </SettingsRow>
+          <SettingsRow label="Language">
             <Select aria-label="Language" variant="quiet" options={languages} defaultValue="en" />
-          </Row>
-          <Row label="Time zone">
+          </SettingsRow>
+          <SettingsRow label="Time zone">
             <ComboBox aria-label="Time zone" options={timeZones} defaultSelectedKey="Europe/London" menuTrigger="focus" placeholder="Type a city" className="w-full sm:w-56" />
-          </Row>
+          </SettingsRow>
         </Panel>
 
         <Panel id="appearance">
-          <Row label="Theme">
+          <SettingsRow label="Theme">
             <SegmentedControl
               aria-label="Theme"
               defaultValue="system"
@@ -72,13 +73,13 @@ export function SettingsDialog(props: Omit<ModalProps, 'title' | 'children'>) {
                 { id: 'system', label: 'System', icon: <Monitor /> },
               ]}
             />
-          </Row>
-          <Row label="Chat font">
+          </SettingsRow>
+          <SettingsRow label="Chat font">
             <Select aria-label="Chat font" variant="quiet" options={chatFonts} defaultValue="sans" />
-          </Row>
-          <Row label="Text size">
+          </SettingsRow>
+          <SettingsRow label="Text size">
             <Select aria-label="Text size" variant="quiet" options={textSizes} defaultValue="default" />
-          </Row>
+          </SettingsRow>
           <Switch toggleSide="end" defaultSelected description="Animate replies as they stream in.">
             Typing effect
           </Switch>
@@ -103,26 +104,26 @@ export function SettingsDialog(props: Omit<ModalProps, 'title' | 'children'>) {
           <Switch toggleSide="end" defaultSelected description="Turn off to keep new chats out of your history.">
             Save chat history
           </Switch>
-          <Row label="Export data" description="A download link arrives by email within a day.">
+          <SettingsRow label="Export data" description="A download link arrives by email within a day.">
             <Button>Export</Button>
-          </Row>
+          </SettingsRow>
         </Panel>
 
         <Panel id="account">
-          <Row label="Email" description={user.email}>
+          <SettingsRow label="Email" description={user.email}>
             <Button>Change</Button>
-          </Row>
-          <Row label="Sign out everywhere" description="Ends every session except this one.">
+          </SettingsRow>
+          <SettingsRow label="Sign out everywhere" description="Ends every session except this one.">
             <Button>Sign out</Button>
-          </Row>
-          <Row label="Delete account" description="Removes your chats, projects and files for good.">
+          </SettingsRow>
+          <SettingsRow label="Delete account" description="Removes your chats, projects and files for good.">
             <DialogTrigger>
               <Button variant="danger">Delete</Button>
               <ConfirmModal title="Delete your account?" destructive confirmLabel="Delete account" onConfirm={() => {}}>
                 <p className="m-0">All chats, projects and files go with it. This can’t be undone.</p>
               </ConfirmModal>
             </DialogTrigger>
-          </Row>
+          </SettingsRow>
         </Panel>
       </Tabs>
     </Modal>
@@ -137,18 +138,5 @@ function Panel({ id, children }: { id: string; children: ReactNode }) {
       {/* Rows split by hairlines, like a settings list */}
       <div className="flex max-w-2xl flex-col divide-y divide-divider *:py-3.5 *:first:pt-0">{children}</div>
     </TabPanel>
-  )
-}
-
-/** Label and help on the left, control on the right. Stacks on narrow screens. */
-function Row({ label, description, children }: { label: ReactNode; description?: ReactNode; children: ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-      <div className="flex min-w-0 flex-col">
-        <span className="text-ui leading-5">{label}</span>
-        {description && <span className="text-ui-sm leading-4 text-muted">{description}</span>}
-      </div>
-      {children}
-    </div>
   )
 }

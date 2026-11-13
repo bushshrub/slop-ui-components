@@ -5,6 +5,8 @@ export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'c
   /** Icon shown in a soft round badge (any SVG, e.g. lucide). */
   icon?: ReactNode
   title: ReactNode
+  /** Heading level of the title, to fit the page outline. Default 3. */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6
   description?: ReactNode
   /** Buttons or links under the text. */
   actions?: ReactNode
@@ -14,8 +16,9 @@ export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'c
 }
 
 /** Centered placeholder for a view with nothing to show, with an optional next step. */
-export function EmptyState({ icon, title, description, actions, size = 'default', className, ...props }: EmptyStateProps) {
+export function EmptyState({ icon, title, headingLevel = 3, description, actions, size = 'default', className, ...props }: EmptyStateProps) {
   const compact = size === 'compact'
+  const Title = `h${headingLevel}` as const
   return (
     <div
       {...props}
@@ -33,9 +36,9 @@ export function EmptyState({ icon, title, description, actions, size = 'default'
         </div>
       )}
       <div className="flex max-w-sm flex-col gap-1">
-        <h3 className={cx('m-0 font-medium text-fg', compact ? 'text-ui' : 'text-[length:calc(var(--ui-text)+0.125rem)] leading-6')}>
+        <Title className={cx('m-0 font-medium text-fg', compact ? 'text-ui' : 'text-[length:calc(var(--ui-text)+0.125rem)] leading-6')}>
           {title}
-        </h3>
+        </Title>
         {description && <p className="m-0 text-ui text-muted">{description}</p>}
       </div>
       {actions && <div className="mt-1 flex flex-wrap justify-center gap-2">{actions}</div>}
