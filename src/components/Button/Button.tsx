@@ -1,6 +1,16 @@
-import type { ReactNode } from 'react'
-import { Button as AriaButton, type ButtonProps as AriaButtonProps } from 'react-aria-components'
+import { useContext, type ReactNode } from 'react'
+import {
+  Button as AriaButton,
+  Link as AriaLink,
+  ProgressBarContext,
+  TooltipTriggerStateContext,
+  useSlottedContext,
+  type ButtonProps as AriaButtonProps,
+  type LinkProps as AriaLinkProps,
+} from 'react-aria-components'
 import { cx } from '../../lib/cx'
+import { Spinner } from '../Loading/Loading'
+import { Tooltip, type TooltipProps } from '../Tooltip/Tooltip'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
 export type ButtonSize = 'sm' | 'md' | 'lg'
@@ -35,7 +45,10 @@ const iconSizes: Record<ButtonSize, string> = {
   lg: 'size-control-lg touch:size-control-touch',
 }
 
-/** Class string for a button look, for links or other elements that should look like a button. */
+/**
+ * Class string for a button look, for other react-aria elements that should look like a button. The hover, press and
+ * focus styles need react-aria's data attributes, so a plain `<a>` only gets the resting look; use `LinkButton` for links.
+ */
 export function buttonClass(variant: ButtonVariant = 'secondary', size: ButtonSize = 'md') {
   return cx(base, variants[variant], sizes[size])
 }
@@ -52,13 +65,42 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'className' | 'childr
   children?: ReactNode
 }
 
-/** Text button with an optional leading icon. Uses react-aria for press, focus and disabled handling. */
+// Takes the id react-aria's Button hands down, so a pending button with an aria-label is named "<label> Loading".
+function PendingSpinner() {
+  const progress = useSlottedContext(ProgressBarContext)
+  return <Spinner size="sm" id={progress?.id} />
+}
+
+/**
+ * Text button with an optional leading icon. Uses react-aria for press, focus and disabled handling.
+ * While `isPending`, a spinner takes the icon's place and presses are ignored; the button stays focusable.
+ */
 export function Button({ variant = 'secondary', size = 'md', icon, className, children, ...props }: ButtonProps) {
   return (
     <AriaButton {...props} className={cx(buttonClass(variant, size), className)}>
-      {icon}
+      {props.isPending ? <PendingSpinner /> : icon}
       {children}
     </AriaButton>
+  )
+}
+
+export interface LinkButtonProps extends Omit<AriaLinkProps, 'className' | 'children'> {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  /** Icon shown before the label (any 16px SVG, e.g. lucide). */
+  icon?: ReactNode
+  /** Extra classes, merged after the variant classes. */
+  className?: string
+  children?: ReactNode
+}
+
+/** Link that looks like a Button, for actions that navigate. Uses react-aria's Link, so it follows the app's router. */
+export function LinkButton({ variant = 'secondary', size = 'md', icon, className, children, ...props }: LinkButtonProps) {
+  return (
+    <AriaLink {...props} className={cx(buttonClass(variant, size), 'no-underline', className)}>
+      {icon}
+      {children}
+    </AriaLink>
   )
 }
 
@@ -68,13 +110,33 @@ export interface IconButtonProps extends Omit<AriaButtonProps, 'className' | 'ch
   /** Defaults to `ghost`; icon buttons rarely need a fill. */
   variant?: ButtonVariant
   size?: ButtonSize
+  /** Tooltip text. Defaults to the `aria-label`; pass `false` for no tooltip. */
+  tooltip?: ReactNode
+  /** Keyboard shortcut shown in the tooltip, e.g. `Ctrl+B`. */
+  shortcut?: string
+  /** Side the tooltip opens on. Default `top`. */
+  tooltipPlacement?: TooltipProps['placement']
   className?: string
   children: ReactNode
 }
 
-/** Square icon-only button. Ghost variants render the icon in the muted color. */
-export function IconButton({ variant = 'ghost', size = 'md', className, children, ...props }: IconButtonProps) {
-  return (
+/**
+ * Square icon-only button with a tooltip that shows its name. Ghost variants render the icon in the muted color.
+ * While `isPending`, a spinner replaces the icon.
+ */
+export function IconButton({
+  variant = 'ghost',
+  size = 'md',
+  tooltip,
+  shortcut,
+  tooltipPlacement,
+  className,
+  children,
+  ...props
+}: IconButtonProps) {
+  // Already the trigger of an app-level Tooltip: that one wins.
+  const inTooltip = useContext(TooltipTriggerStateContext) != null
+  const button = (
     <AriaButton
       {...props}
       className={cx(
@@ -85,7 +147,13 @@ export function IconButton({ variant = 'ghost', size = 'md', className, children
         className,
       )}
     >
-      {children}
+      {props.isPending ? <PendingSpinner /> : children}
     </AriaButton>
+  )
+  if (tooltip === false || inTooltip) return button
+  return (
+    <Tooltip content={tooltip == null || tooltip === true ? props['aria-label'] : tooltip} shortcut={shortcut} placement={tooltipPlacement}>
+      {button}
+    </Tooltip>
   )
 }

@@ -25,7 +25,7 @@ export function Toggletip({ children, 'aria-label': ariaLabel, icon, placement =
   const label = ariaLabel ?? strings.moreInfo
   return (
     <DialogTrigger>
-      <IconButton size="sm" aria-label={label}>
+      <IconButton size="sm" aria-label={label} tooltip={false}>
         {icon ?? <Info />}
       </IconButton>
       <Popover {...props} placement={placement} offset={8} className={cx(bubbleClass, 'max-w-64', className)}>

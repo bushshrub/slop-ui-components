@@ -5,7 +5,6 @@ import { RadioCards } from '../components/Inputs/RadioCards'
 import { TextField } from '../components/Inputs/TextField'
 import { Popover, PopoverTrigger, usePopoverView } from '../components/Popover/Popover'
 import { Avatar } from '../components/Sidebar/Sidebar'
-import { Tooltip } from '../components/Tooltip/Tooltip'
 import { user } from './sample-data'
 
 type Access = 'invited' | 'link'
@@ -93,9 +92,7 @@ export function ShareChat({ email = user.email, name = user.name }: { email?: st
           </p>
           <hr className="border-divider" />
           <div className="flex items-center justify-end gap-2">
-            <Tooltip content="Sharing settings">
-              <IconButton aria-label="Sharing settings"><Settings /></IconButton>
-            </Tooltip>
+            <IconButton aria-label="Sharing settings"><Settings /></IconButton>
             <Button icon={<LinkIcon />}>Copy link</Button>
           </div>
         </div>

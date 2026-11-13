@@ -11,14 +11,16 @@ const spinnerSizes = {
 export interface SpinnerProps {
   /** sm matches an icon in a button. Default md. */
   size?: keyof typeof spinnerSizes
+  id?: string
   className?: string
 }
 
 /** Spinning indicator in the current text color. Stops spinning for people who prefer reduced motion. */
-export function Spinner({ size = 'md', className }: SpinnerProps) {
+export function Spinner({ size = 'md', id, className }: SpinnerProps) {
   const strings = useStrings()
   return (
     <Loader2
+      id={id}
       role="status"
       aria-label={strings.loading}
       className={cx('shrink-0 motion-safe:animate-spin', spinnerSizes[size], className)}

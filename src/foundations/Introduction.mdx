@@ -78,6 +78,6 @@ The components have strong defaults, but an app is never stuck with them. Pick t
 2. **Override one instance:** every component takes `className`, merged with `tailwind-merge`, so your class wins:
    `<Button className="rounded-full px-5" />`.
 3. **Wrap:** build an app component on top, e.g. a `SaveButton` that is a `Button` with `variant="primary"` and a pending label.
-4. **Reuse the look on your own element:** `buttonClass('outline', 'sm')` styles an `<a>`, and `fieldBox` styles any custom input.
+4. **Reuse the look on your own element:** `buttonClass('outline', 'sm')` styles another react-aria element (for a link, use `LinkButton`), and `fieldBox` styles any custom input.
 5. **Build your own:** use react-aria-components directly with the token utilities (`bg-popover`, `border-border`,
    `rounded-popover`, `shadow-popover`, `text-muted` …). It will match the rest automatically.
