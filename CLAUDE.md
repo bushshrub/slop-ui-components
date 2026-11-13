@@ -15,5 +15,6 @@ commit. If you cannot tell which model you are, ask instead of guessing.
 
 ## Releases
 
-Bump `version` in `package.json`, commit as `Release vX.Y.Z`, tag `vX.Y.Z`, push the commit and the tag, then
-create a GitHub release for the tag. The package is not published to npm.
+Bump `version` in `package.json`, commit as `Release vX.Y.Z`, tag `vX.Y.Z`, and push the commit and the tag.
+`.github/workflows/release.yml` then runs typecheck, lint and the tests, and creates the GitHub release for the
+tag if they pass. Do not create the release by hand. The package is not published to npm.

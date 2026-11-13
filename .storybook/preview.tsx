@@ -9,14 +9,19 @@ import '../src/styles/index.css'
 import './preview.css'
 
 /** Sets data-theme on <html> so portals (menus, modals) pick up the theme too. */
-const withTheme: Decorator = (Story, { globals, parameters }) => {
-  const theme = parameters.theme ?? globals.theme ?? 'light'
+const ThemeRoot = ({ theme, children }: PropsWithChildren<{ theme: string }>) => {
   useEffect(() => {
     if (theme === 'side-by-side') return
     document.documentElement.dataset.theme = theme
   }, [theme])
-  return <Story />
+  return children
 }
+
+const withTheme: Decorator = (Story, { globals, parameters }) => (
+  <ThemeRoot theme={parameters.theme ?? globals.theme ?? 'light'}>
+    <Story />
+  </ThemeRoot>
+)
 
 /** Storybook's own docs chrome (prose, code blocks, arg tables), matched to our tokens. */
 const docsThemes = {
