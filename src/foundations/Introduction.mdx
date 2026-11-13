@@ -1,0 +1,83 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Foundations/Introduction" />
+
+# Slop UI
+
+The components I keep rebuilding across projects (jaa, llm-chat-ui, burger, pmservers), built once.
+Built on react-aria-components for behavior and Tailwind v4 for styling. Icons come from lucide-react.
+
+## Design principles
+
+- **Quiet and warm.** Cream and charcoal neutrals and one terracotta accent. Primary buttons are ink, not accent.
+- **Borders before shadows.** 1px hairlines carry structure. Only floating things (menus, modals, drawers) get a shadow.
+- **Dense.** 14px UI text, 32px rows and buttons, 28px small buttons. Hover is a fill step, not a lift.
+- **Editorial titles.** Page and dialog titles are Source Serif; everything else is Inter. IDs and keys are JetBrains Mono.
+- **Numbers line up.** Counts, dates and sizes use tabular numerals.
+- **No dashboard clichés.** No gradients, glows, glass, emoji or colored icon tiles.
+
+## Using it in a project
+
+```css
+/* app.css */
+@import "slop-ui-components/styles.css";   /* tokens + Tailwind theme */
+@import "slop-ui-components/fonts.css";    /* optional, self-hosted fonts */
+@source "../node_modules/slop-ui-components/src";    /* let Tailwind see the component classes */
+```
+
+```tsx
+import { Button, Modal, Menu, MenuItem, AppShell, Sidebar } from 'slop-ui-components'
+```
+
+## Theming
+
+Every color, radius, font and size is a `--ui-*` CSS variable in `src/styles/tokens.css`. That file is the only place they
+are defined. Set `data-theme="light"` or `"dark"` on any ancestor, or leave it unset to follow the OS. To retheme,
+override variables on `:root` or any subtree:
+
+```css
+:root { --ui-accent: #2f5fd0; --ui-radius-md: 6px; --ui-font-serif: var(--ui-font-sans); }
+```
+
+Sizes work the same way. Control heights (`--ui-control-sm`, `--ui-control`, `--ui-control-lg`, `--ui-control-touch`),
+row height (`--ui-row`), icons (`--ui-icon`), checkboxes (`--ui-check`) and switches (`--ui-switch`) drive every
+component, so one override changes density everywhere:
+
+```css
+/* Roomier */
+:root { --ui-control: 2.5rem; --ui-row: 2.5rem; --ui-switch: 1.5rem; }
+```
+
+See **Foundations/Theme** for the two built-in themes and two override presets side by side.
+
+## Languages
+
+Text you pass in (labels, options, titles) is yours to translate. The text the components write themselves, such as
+"Close", "No matches" or "Must be 32 or less.", lives in one dictionary, `defaultStrings` in `src/lib/strings.tsx`.
+Override any of it with `UIStringsProvider`, and set the locale with react-aria's `I18nProvider` so numbers, dates and
+react-aria's own text follow:
+
+```tsx
+import { I18nProvider, UIStringsProvider } from 'slop-ui-components'
+
+<I18nProvider locale="de-DE">
+  <UIStringsProvider strings={{ close: 'Schließen', showingRange: (from, to, total) => `${from}–${to} von ${total}` }}>
+    <App />
+  </UIStringsProvider>
+</I18nProvider>
+```
+
+Entries with values are functions; numbers arrive already formatted for the locale. Anything you leave out stays
+English. Right-to-left layout is not supported.
+
+## Extending without forking
+
+The components have strong defaults, but an app is never stuck with them. Pick the lightest option that works:
+
+1. **Retheme:** override `--ui-*` tokens globally or on a subtree. No component changes.
+2. **Override one instance:** every component takes `className`, merged with `tailwind-merge`, so your class wins:
+   `<Button className="rounded-full px-5" />`.
+3. **Wrap:** build an app component on top, e.g. a `SaveButton` that is a `Button` with `variant="primary"` and a pending label.
+4. **Reuse the look on your own element:** `buttonClass('outline', 'sm')` styles an `<a>`, and `fieldBox` styles any custom input.
+5. **Build your own:** use react-aria-components directly with the token utilities (`bg-popover`, `border-border`,
+   `rounded-popover`, `shadow-popover`, `text-muted` …). It will match the rest automatically.

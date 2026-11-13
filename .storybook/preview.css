@@ -1,0 +1,5 @@
+/* Centered layout sizes the story root to its content; cap it so fixed-width demos (w-80) shrink
+   to fit narrow viewports instead of overflowing. */
+.sb-main-centered #storybook-root {
+  max-width: 100%;
+}
