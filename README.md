@@ -54,7 +54,7 @@ import { Button, NumberField, Modal } from 'slop-ui-components'
 | Feedback   | Toast, Alert, Spinner, Skeleton, ProgressBar, Meter, StackedMeter, EmptyState                               |
 | Navigation | Tabs, Breadcrumbs, Pagination, Stepper                                                                      |
 | Layout     | AppShell, Sidebar, Card, SettingsGroup, SettingsRow, Carousel, Disclosure, Heading, PageHeader                                          |
-| Data       | Table, DataTable, Badge, CountBadge, Kbd                                                                               |
+| Data       | Table, DataTable, Badge, CountBadge, Kbd, Highlight                                                                               |
 
 Storybook has a page for each, plus larger examples (a chat app, a settings dialog):
 
@@ -81,6 +81,13 @@ If your app has its own default theme rather than following the OS, set `data-th
   --ui-fg: var(--app-fg);
 }
 ```
+
+Muted text sits on tinted fills as well as on the page, so when you map `--ui-muted`, check it still reads (4.5:1)
+on `--ui-track`, `--ui-hover` and `--ui-button`, and map those too if it does not.
+
+Sizes are in `rem`, so changing the root font size scales text and spacing together. To change spacing alone, set
+`data-density="compact"` or `"spacious"` on `<html>` or on any subtree; it changes the heights of controls and rows
+and leaves text size alone.
 
 ## Languages
 

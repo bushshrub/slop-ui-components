@@ -4,6 +4,7 @@ import { FolderOpen, MessageSquarePlus, Plus, Settings, SunMoon } from 'lucide-r
 import { expect, fn, screen, waitFor, within } from 'storybook/test'
 import { Button } from '../Button/Button'
 import { SegmentedControl } from '../Inputs/SegmentedControl'
+import { Highlight } from '../Highlight/Highlight'
 import { Kbd } from '../Kbd/Kbd'
 import { CommandItem, CommandPalette, CommandSection, useCommandPaletteShortcut, type CommandPaletteProps } from './CommandPalette'
 
@@ -188,19 +189,6 @@ const scopes = [
   { id: 'week', label: 'This week' },
 ] as const
 type Scope = (typeof scopes)[number]['id']
-
-/** Wraps the part of `text` that matches `query` in a mark. */
-function Highlight({ text, query }: { text: string; query: string }) {
-  const at = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1
-  if (at < 0) return text
-  return (
-    <>
-      {text.slice(0, at)}
-      <mark className="bg-accent-soft text-fg">{text.slice(at, at + query.length)}</mark>
-      {text.slice(at + query.length)}
-    </>
-  )
-}
 
 function OwnSearchDemo(args: CommandPaletteProps) {
   const [query, setQuery] = useState('')

@@ -11,8 +11,9 @@ import {
   type Key,
   type ModalOverlayProps,
 } from 'react-aria-components'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { useStrings } from '../../lib/strings'
+import { IconButton } from '../Button/Button'
 import { MenuItem, MenuSection, type MenuItemProps, type MenuSectionProps } from '../Menu/Menu'
 
 /** Group of commands with a small label above it. Same as a Menu section. */
@@ -24,6 +25,8 @@ export interface CommandPaletteProps<T extends object = object> extends Omit<Mod
   placeholder?: string
   /** Shown when the query matches nothing. */
   emptyMessage?: ReactNode
+  /** Close button at the right of the field, for palettes people open by touch. Esc and a press outside always close it. */
+  showClose?: boolean
   /** Close after an item runs. Default true. */
   closeOnAction?: boolean
   /** The search text (controlled). Leave unset to let the palette keep it. */
@@ -65,6 +68,7 @@ const CommandPaletteContext = createContext<((key: Key) => void) | null>(null)
 export function CommandPalette<T extends object = object>({
   placeholder,
   emptyMessage,
+  showClose,
   closeOnAction = true,
   query,
   onQueryChange,
@@ -115,6 +119,11 @@ export function CommandPalette<T extends object = object>({
                     placeholder={searchPlaceholder}
                     className="h-control-lg min-w-0 flex-1 bg-transparent text-base text-fg outline-none placeholder:text-subtle [&::-webkit-search-cancel-button]:hidden"
                   />
+                  {showClose && (
+                    <IconButton size="sm" aria-label={strings.close} onPress={close} className="-mr-2">
+                      <X />
+                    </IconButton>
+                  )}
                 </SearchField>
                 {toolbar && <div className="flex shrink-0 items-center gap-1 border-b border-divider px-3 py-1.5">{toolbar}</div>}
                 {status && (

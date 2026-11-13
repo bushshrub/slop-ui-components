@@ -6,6 +6,7 @@
  *
  * Theme is chosen by [data-theme="light" | "dark"] on any ancestor.
  * Without the attribute, the OS preference decides.
+ * Density is chosen by [data-density="compact" | "spacious"], see the end of this file.
  */
 
 :root,
@@ -193,4 +194,23 @@
      --ui-progress-fill: progress bar fill (default: interactive)
      --ui-chart-1 … --ui-chart-5: stacked bar / chart series, in order
        (default: interactive, accent, success, warning, subtle) */
+}
+
+/*
+ * Density: heights of controls and rows, apart from text size. Set data-density on <html> or any subtree
+ * (a long settings nav, a dense table). Unset is the default above. Touch screens keep --ui-control-touch
+ * as the floor either way. To scale text and spacing together, change the root font size instead.
+ */
+[data-density="compact"] {
+  --ui-control-sm: 1.75rem;
+  --ui-control: 2rem;
+  --ui-control-lg: 2.25rem;
+  --ui-row: 1.875rem;
+}
+
+[data-density="spacious"] {
+  --ui-control-sm: 2.25rem;
+  --ui-control: 2.5rem;
+  --ui-control-lg: 2.75rem;
+  --ui-row: 2.5rem;
 }
