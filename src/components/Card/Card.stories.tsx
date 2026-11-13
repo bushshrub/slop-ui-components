@@ -56,6 +56,24 @@ export const Gallery: Story = {
   ),
 }
 
+/** `id` and aria attributes reach the element whether the card is a div, a link or a button. */
+export const AttributesTest: Story = {
+  name: 'Attributes (test)',
+  tags: ['!dev', '!autodocs'],
+  render: () => (
+    <ul className="m-0 flex list-none flex-col gap-2 p-0">
+      <li><Card id="plain" aria-labelledby="t1"><span id="t1">Plain</span></Card></li>
+      <li><Card id="link" href="#x" aria-labelledby="t2"><span id="t2">Link</span></Card></li>
+      <li><Card id="button" onPress={() => {}} aria-labelledby="t3"><span id="t3">Button</span></Card></li>
+    </ul>
+  ),
+  play: async ({ canvas, canvasElement }) => {
+    await expect(canvasElement.querySelector('#plain')).toHaveAttribute('aria-labelledby', 't1')
+    await expect(canvas.getByRole('link', { name: 'Link' })).toHaveAttribute('id', 'link')
+    await expect(canvas.getByRole('button', { name: 'Button' })).toHaveAttribute('id', 'button')
+  },
+}
+
 /** Test for Playground: pressing the card calls onPress. */
 export const PlaygroundTest: Story = {
   ...Playground,

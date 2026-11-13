@@ -10,7 +10,7 @@ const meta = {
       description: {
         component:
           'Brief, temporary messages. Mount `<Toaster />` once, then call `toast(title, options)` from anywhere. ' +
-          'Bottom right on desktop, full width at the bottom on phones. Danger toasts with an action stay until dismissed.',
+          'Bottom right on desktop, full width at the bottom on phones. Danger toasts with an action, and toasts with `timeout: null`, stay until dismissed.',
       },
     },
   },
@@ -38,6 +38,7 @@ const meta = {
       >
         Sticky error
       </Button>
+      <Button onPress={() => toast('Submitting…', { timeout: null })}>Stays until closed</Button>
     </div>
   ),
 } satisfies Meta

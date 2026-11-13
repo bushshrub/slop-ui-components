@@ -69,3 +69,13 @@ export const Test: Story = {
     await expect(trigger).toHaveAttribute('aria-expanded', 'false')
   },
 }
+
+export const HeadingLevelTest: Story = {
+  ...Main,
+  name: 'Heading level (test)',
+  tags: ['!dev', '!autodocs'],
+  args: { headingLevel: 2 },
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByRole('heading', { level: 2 })).toBeInTheDocument()
+  },
+}

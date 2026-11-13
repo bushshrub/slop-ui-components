@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Plus } from 'lucide-react'
+import { Dialog } from 'react-aria-components'
+import { expect } from 'storybook/test'
 import { Button } from '../Button/Button'
 import { Heading, PageHeader } from './Heading'
 
@@ -37,6 +39,25 @@ export const Gallery: Story = {
       <Heading variant="label">Danger zone</Heading>
     </div>
   ),
+}
+
+/** `id` reaches the element, and `slot="title"` names a react-aria Dialog. */
+export const AttributesTest: Story = {
+  name: 'Attributes (test)',
+  tags: ['!dev', '!autodocs'],
+  render: () => (
+    <div>
+      <Heading id="members" variant="section" as="h3">Members</Heading>
+      <Dialog>
+        <Heading slot="title" variant="dialog">Rename project</Heading>
+      </Dialog>
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('heading', { name: 'Members', level: 3 })).toHaveAttribute('id', 'members')
+    await expect(canvas.getByRole('dialog', { name: 'Rename project' })).toBeInTheDocument()
+    await expect(canvas.getByRole('heading', { name: 'Rename project', level: 2 })).toBeInTheDocument()
+  },
 }
 
 /** PageHeader with actions, when the title is long enough to wrap the actions below. */

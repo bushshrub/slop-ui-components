@@ -1,14 +1,14 @@
-import type { ReactNode } from 'react'
+import type { AriaAttributes, ReactNode } from 'react'
 import { Button, Link, type LinkProps } from 'react-aria-components'
 import { cx } from '../../lib/cx'
 
-export interface CardProps {
+// `id` and the aria attributes (e.g. `aria-labelledby`) reach the element in all three forms.
+export interface CardProps extends AriaAttributes {
+  id?: string
   /** Makes the card a link. */
   href?: LinkProps['href']
   /** Makes the card a button. Ignored when `href` is set. */
   onPress?: () => void
-  /** Accessible name for an interactive card, when its content is not enough. */
-  'aria-label'?: string
   className?: string
   children?: ReactNode
 }

@@ -26,8 +26,11 @@ export interface ToastOptions {
   tone?: ToastTone
   /** A button in the toast. Pressing it runs `onPress` and closes the toast. */
   action?: { label: string; onPress: () => void }
-  /** Milliseconds before it closes itself. Default 5000. Danger toasts with an action stay until dismissed. */
-  timeout?: number
+  /**
+   * Milliseconds before it closes itself. Default 5000. `null` keeps it until the user closes it or
+   * `toastQueue.close(key)` runs. Danger toasts with an action stay until dismissed.
+   */
+  timeout?: number | null
 }
 
 /** The global queue behind `toast()` and `<Toaster />`. */
@@ -35,7 +38,7 @@ export const toastQueue = new AriaToastQueue<ToastContent>({ maxVisibleToasts: 4
 
 /** Shows a toast. Returns its key, which `toastQueue.close(key)` accepts. */
 export function toast(title: string, { description, tone = 'neutral', action, timeout = 5000 }: ToastOptions = {}) {
-  const sticky = tone === 'danger' && action
+  const sticky = timeout === null || (tone === 'danger' && action)
   return toastQueue.add({ title, description, tone, action }, sticky ? {} : { timeout })
 }
 

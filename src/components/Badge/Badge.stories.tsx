@@ -30,11 +30,11 @@ type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {}
 
-/** Every tone as soft and solid, with a dot and an icon. */
+/** Every tone as soft, solid and outline, with a dot and an icon, and custom colors. */
 export const Gallery: Story = {
   render: () => (
     <div className="flex flex-col gap-4 text-fg">
-      {(['soft', 'solid'] as const).map((variant) => (
+      {(['soft', 'solid', 'outline'] as const).map((variant) => (
         <div key={variant} className="flex flex-wrap items-center gap-2">
           {tones.map((t) => (
             <Badge key={t} tone={t} variant={variant}>{t}</Badge>
@@ -53,7 +53,15 @@ export const Gallery: Story = {
         <Badge size="sm" tone="warning" dot>Small</Badge>
       </div>
       <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="outline" dot color="#8040D0">Interview</Badge>
+        <Badge variant="outline" dot color="teal">Applied</Badge>
+        <Badge color="#8040D0">Draft</Badge>
+        <Badge color="teal" dot>Applied</Badge>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
         <CountBadge count={3} />
+        <CountBadge count={7} tone="warning" />
+        <CountBadge count={2} tone="danger" />
         <CountBadge count={42} tone="neutral" />
         <CountBadge count={250} />
         <CountBadge count={0} showZero tone="neutral" />

@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
+import { Heading as AriaHeading } from 'react-aria-components'
 import { cx } from '../../lib/cx'
 
 export type HeadingVariant = 'page' | 'dialog' | 'section' | 'label'
@@ -10,14 +11,14 @@ const variants: Record<HeadingVariant, string> = {
   label: 'font-sans text-ui-sm leading-4 font-medium text-subtle uppercase tracking-[0.06em]',
 }
 
-const defaultTag: Record<HeadingVariant, 'h1' | 'h2' | 'h3'> = {
-  page: 'h1',
-  dialog: 'h2',
-  section: 'h2',
-  label: 'h3',
+const defaultLevel: Record<HeadingVariant, number> = {
+  page: 1,
+  dialog: 2,
+  section: 2,
+  label: 3,
 }
 
-export interface HeadingProps {
+export interface HeadingProps extends Omit<HTMLAttributes<HTMLHeadingElement>, 'className' | 'children'> {
   /**
    * Visual style. `page` and `dialog` are serif titles; `section` is a sans heading;
    * `label` is a small uppercase group label.
@@ -31,14 +32,17 @@ export interface HeadingProps {
   children: ReactNode
 }
 
-/** Title text in one of four fixed styles. */
-export function Heading({ variant = 'section', as, count, className, children }: HeadingProps) {
-  const Tag = as ?? defaultTag[variant]
+/**
+ * Title text in one of four fixed styles. Other attributes (`id`, `aria-*`) reach the heading element;
+ * `slot="title"` makes it the title of a react-aria Dialog.
+ */
+export function Heading({ variant = 'section', as, count, className, children, ...props }: HeadingProps) {
+  const level = as ? Number(as[1]) : defaultLevel[variant]
   return (
-    <Tag className={cx('m-0 text-fg', variants[variant], className)}>
+    <AriaHeading {...props} level={level} className={cx('m-0 text-fg', variants[variant], className)}>
       {children}
       {count != null && <span className="ml-2 font-sans text-base font-normal tabular-nums text-muted">{count}</span>}
-    </Tag>
+    </AriaHeading>
   )
 }
 
