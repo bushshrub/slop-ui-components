@@ -11,9 +11,10 @@ with CSS variables, so it can take on your app's look.
 
 ## Install
 
-It is not on npm. Install it from GitHub, pinned to a commit:
+It is not on npm. Install it from GitHub, pinned to a release tag or a commit:
 
 ```sh
+pnpm add github:bushshrub/slop-ui-components#v0.1.0
 pnpm add github:bushshrub/slop-ui-components#<commit>
 ```
 
