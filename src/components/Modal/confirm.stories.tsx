@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, screen, waitFor, within } from 'storybook/test'
 import { useState } from 'react'
 import { Button } from '../Button/Button'
-import { confirm, ConfirmHost } from './confirm'
+import { alert, confirm, ConfirmHost } from './confirm'
 
 function Demo() {
   const [answer, setAnswer] = useState('Not asked yet')
@@ -65,5 +65,25 @@ export const MainTest: Story = {
       await expect(await canvas.findByText('Confirmed')).toBeVisible()
       await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument())
     })
+  },
+}
+
+/** `alert()` shows a message with a single button and resolves when it is closed. */
+export const Alert: Story = {
+  render: () => (
+    <div className="flex items-center gap-3 text-ui">
+      <ConfirmHost />
+      <Button onPress={() => alert({ title: 'This chat can’t be shared', description: 'It contains a private attachment.' })}>
+        Share chat
+      </Button>
+    </div>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Share chat' }))
+    const dialog = await screen.findByRole('dialog')
+    await waitFor(() => expect(dialog).toBeVisible())
+    await expect(within(dialog).queryByRole('button', { name: 'Cancel' })).toBeNull()
+    await userEvent.click(within(dialog).getByRole('button', { name: 'OK' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   },
 }

@@ -4,7 +4,7 @@ import { expect, fn, screen, userEvent as user, waitFor, within } from 'storyboo
 import { models } from '../../examples/sample-data'
 import { Button, IconButton } from '../Button/Button'
 import { Switch } from '../Inputs/Switch'
-import { Menu, MenuItem, MenuSeparator, MenuTrigger, SubmenuTrigger } from './Menu'
+import { Menu, MenuItem, MenuSection, MenuSeparator, MenuTrigger, SubmenuTrigger } from './Menu'
 
 const meta = {
   title: 'Components/Overlays/Menu',
@@ -210,4 +210,38 @@ export const SearchAndSwitch: Story = {
       </Menu>
     </MenuTrigger>
   ),
+}
+
+/** A section with its own selection beside plain actions, in a menu as wide as its full-width trigger. */
+export const SectionSelection: Story = {
+  name: 'Selection in one section',
+  render: (args) => (
+    <div className="w-80">
+      <MenuTrigger>
+        <Button className="w-full">View options</Button>
+        <Menu {...args} matchTriggerWidth>
+          <MenuSection aria-label="Actions">
+            <MenuItem id="export" icon={<Download />}>Export</MenuItem>
+          </MenuSection>
+          <MenuSeparator />
+          <MenuSection title="Columns" selectionMode="multiple" defaultSelectedKeys={['status']}>
+            <MenuItem id="status">Status</MenuItem>
+            <MenuItem id="owner">Owner</MenuItem>
+          </MenuSection>
+        </Menu>
+      </MenuTrigger>
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    const trigger = canvas.getByRole('button', { name: 'View options' })
+    await user.click(trigger)
+    const menu = await screen.findByRole('menu')
+    await waitFor(() => expect(menu).toBeVisible())
+    await expect(within(menu).getByRole('menuitemcheckbox', { name: 'Status' })).toHaveAttribute('aria-checked', 'true')
+    await expect(within(menu).getByRole('menuitem', { name: 'Export' })).toBeInTheDocument()
+    await user.click(within(menu).getByRole('menuitemcheckbox', { name: 'Owner' }))
+    await expect(within(menu).getByRole('menuitemcheckbox', { name: 'Owner' })).toHaveAttribute('aria-checked', 'true')
+    const popover = menu.closest('[data-trigger]') as HTMLElement
+    await expect(popover.getBoundingClientRect().width).toBeGreaterThanOrEqual(trigger.getBoundingClientRect().width - 1)
+  },
 }

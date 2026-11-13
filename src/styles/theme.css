@@ -93,6 +93,7 @@
   --animate-pop-in: pop-in 120ms ease-out;
   --animate-fade-in: fade-in 120ms ease-out;
   --animate-slide-in: slide-in 180ms ease-out;
+  --animate-slide-in-right: slide-in-right 180ms ease-out;
   --animate-slide-up: slide-up 200ms ease-out;
   --animate-drill-in: drill-in 160ms ease-out;
   --animate-indeterminate: indeterminate 1.4s ease-in-out infinite;
@@ -106,6 +107,9 @@
 }
 @keyframes slide-in {
   from { transform: translateX(-100%); }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
 }
 @keyframes slide-up {
   from { transform: translateY(100%); }

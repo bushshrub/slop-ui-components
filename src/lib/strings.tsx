@@ -11,6 +11,7 @@ export const defaultStrings = {
   // Shared
   close: 'Close',
   cancel: 'Cancel',
+  ok: 'OK',
   back: 'Back',
   dismiss: 'Dismiss',
   loading: 'Loading',

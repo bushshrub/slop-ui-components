@@ -1,4 +1,5 @@
 import { useRef, useSyncExternalStore, type ReactNode } from 'react'
+import { useStrings } from '../../lib/strings'
 import { ConfirmModal } from './Modal'
 
 export interface ConfirmOptions {
@@ -19,8 +20,19 @@ export interface ConfirmOptions {
   onConfirm?: () => void | Promise<void>
 }
 
+export interface AlertOptions {
+  /** The message, e.g. "This chat can’t be shared". */
+  title: ReactNode
+  /** Muted line under the title, e.g. the reason. */
+  description?: ReactNode
+  /** Longer content under the title. */
+  body?: ReactNode
+  /** Label of the only button. Default "OK". */
+  okLabel?: string
+}
+
 interface Pending {
-  options: ConfirmOptions
+  options: Omit<ConfirmOptions, 'confirmLabel'> & { confirmLabel?: string; hideCancel?: boolean }
   resolve: (confirmed: boolean) => void
 }
 
@@ -49,11 +61,21 @@ export function confirm(options: ConfirmOptions): Promise<boolean> {
   return new Promise((resolve) => set({ options, resolve }))
 }
 
-/** Mount once near the root of the app. Shows the modal for `confirm()`. */
+/**
+ * Tells the user something they must acknowledge, with a single button. Resolves when they close it.
+ * Uses the same `<ConfirmHost />` as `confirm()`. For news that needs no answer, use a toast.
+ */
+export function alert({ okLabel, ...options }: AlertOptions): Promise<void> {
+  pending?.resolve(false)
+  return new Promise((resolve) => set({ options: { ...options, confirmLabel: okLabel, hideCancel: true }, resolve: () => resolve() }))
+}
+
+/** Mount once near the root of the app. Shows the modal for `confirm()` and `alert()`. */
 export function ConfirmHost() {
   const current = useSyncExternalStore(subscribe, () => pending, () => null)
   // Keeps the text in place while the modal animates out
-  const shown = useRef<ConfirmOptions | null>(null)
+  const shown = useRef<Pending['options'] | null>(null)
+  const strings = useStrings()
   if (current) shown.current = current.options
   const options = shown.current
   if (!options) return null
@@ -68,7 +90,8 @@ export function ConfirmHost() {
       onOpenChange={(open) => !open && settle(false)}
       title={options.title}
       description={options.description}
-      confirmLabel={options.confirmLabel}
+      confirmLabel={options.confirmLabel ?? strings.ok}
+      hideCancel={options.hideCancel}
       destructive={options.destructive}
       onConfirm={async () => {
         await options.onConfirm?.()

@@ -17,6 +17,7 @@ import {
   Text,
   type MenuItemProps as AriaMenuItemProps,
   type MenuProps as AriaMenuProps,
+  type MenuSectionProps as AriaMenuSectionProps,
   type MenuTriggerProps,
   type PopoverProps,
   useFilter,
@@ -69,6 +70,8 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'className'> {
   header?: ReactNode
   /** Other content below the items, e.g. a "Manage…" link. */
   footer?: ReactNode
+  /** Make the menu at least as wide as its trigger, for a menu under a full-width button. */
+  matchTriggerWidth?: boolean
   className?: string
 }
 
@@ -86,6 +89,7 @@ export function Menu<T extends object>({
   searchPlaceholder,
   header,
   footer,
+  matchTriggerWidth,
   className,
   renderEmptyState,
   ...props
@@ -141,7 +145,7 @@ export function Menu<T extends object>({
   return (
     <MenuSheetContext.Provider value={false}>
       <CascadeContext.Provider value={isSubmenu ? cascade : null}>
-        <Popover {...position} className={popoverClass}>
+        <Popover {...position} className={cx(popoverClass, matchTriggerWidth && !isSubmenu && 'min-w-[max(14rem,var(--trigger-width))]')}>
           {content}
         </Popover>
       </CascadeContext.Provider>
@@ -252,7 +256,11 @@ export function MenuItem({ icon, shortcut, detail, description, tone = 'default'
   )
 }
 
-export interface MenuSectionProps {
+export interface MenuSectionProps
+  extends Pick<
+    AriaMenuSectionProps<object>,
+    'selectionMode' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'disallowEmptySelection'
+  > {
   /** Small label above the group. Omit for an unlabeled group. */
   title?: ReactNode
   /** Accessible name when there is no visible title. */
@@ -260,7 +268,10 @@ export interface MenuSectionProps {
   children: ReactNode
 }
 
-/** Group of related items, optionally with a header. */
+/**
+ * Group of related items, optionally with a header. With `selectionMode` the group has its own selection,
+ * so a menu can mix plain actions with a checked "current choice" or on/off rows.
+ */
 export function MenuSection({ title, children, ...props }: MenuSectionProps) {
   return (
     <AriaMenuSection {...props} className="flex flex-col">
