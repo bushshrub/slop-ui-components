@@ -56,7 +56,7 @@ import { Button, NumberField, Modal } from 'slop-ui-components'
 | Layout     | AppShell, Sidebar, Card, SettingsGroup, SettingsRow, Carousel, Disclosure, Heading, PageHeader                                          |
 | Data       | Table, DataTable, Badge, CountBadge, Kbd, Highlight                                                                               |
 
-Storybook has a page for each, plus larger examples (a chat app, a settings dialog):
+Storybook has a page for each, plus larger examples (a chat app, ChatGPT-style and Claude-style chat interfaces, a settings dialog):
 
 ```sh
 pnpm install

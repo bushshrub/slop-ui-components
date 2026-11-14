@@ -44,3 +44,35 @@ export const models = [
   { id: 'claude-sonnet-5-5', label: 'Sonnet 5.5', description: 'Fast and capable' },
   { id: 'claude-haiku-5-5', label: 'Haiku 5.5', description: 'Fastest' },
 ]
+
+export interface Message {
+  id: string
+  role: 'user' | 'assistant'
+  /** Paragraphs. */
+  text: string[]
+}
+
+export const messages: Message[] = [
+  { id: 'msg_01', role: 'user', text: ['Lorem ipsum dolor sit amet, consectetur adipiscing elit?'] },
+  {
+    id: 'msg_02',
+    role: 'assistant',
+    text: [
+      'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+    ],
+  },
+  { id: 'msg_03', role: 'user', text: ['Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'] },
+  {
+    id: 'msg_04',
+    role: 'assistant',
+    text: ['Curabitur pretium tincidunt lacus. Nulla gravida orci a odio, nullam varius turpis et commodo pharetra.'],
+  },
+]
+
+export const thinkingLevels = [
+  { id: 'instant', label: 'Instant', description: 'Answers right away, without thinking' },
+  { id: 'medium', label: 'Medium', description: 'Thinks briefly; the everyday default' },
+  { id: 'high', label: 'High', description: 'Thinks longer for harder questions' },
+  { id: 'xhigh', label: 'Extra High', description: 'Thinks the longest, for the hardest problems' },
+]

@@ -1,0 +1,69 @@
+/*
+ * Example theme: the kit's --ui-* tokens overridden to be similar to chatgpt.com. Neutral grays, one system sans for
+ * everything, a black send button. Set data-example-theme="chatgpt" on <html> so menus and sheets get it too.
+ * A host app does the same with its own selector, or overrides the tokens on :root.
+ */
+[data-example-theme="chatgpt"] {
+  --ui-font-sans: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  --ui-font-serif: var(--ui-font-sans);
+  --ui-radius-md: 12px;
+  --ui-radius-popover: 16px;
+}
+
+[data-example-theme="chatgpt"],
+[data-example-theme="chatgpt"] [data-theme="light"] {
+  --ui-bg: #ffffff;
+  --ui-sidebar: #f9f9f9;
+  --ui-surface: #ffffff;
+  --ui-popover: #ffffff;
+  --ui-hover: #efefef;
+  --ui-selected: #e8e8e8;
+  --ui-track: #ececec;
+  --ui-field: rgb(0 0 0 / 0.05);
+  --ui-field-hover: rgb(0 0 0 / 0.08);
+  --ui-button: rgb(0 0 0 / 0.06);
+  --ui-button-hover: rgb(0 0 0 / 0.1);
+  --ui-border: #e3e3e3;
+  --ui-border-strong: #8f8f8f;
+  --ui-divider: rgb(0 0 0 / 0.08);
+  --ui-fg: #0d0d0d;
+  --ui-muted: #5d5d5d;
+  --ui-subtle: #6b6b6b;
+  --ui-primary: #0d0d0d;
+  --ui-primary-fg: #ffffff;
+  --ui-accent: #3f5bd9;
+  --ui-accent-fg: #ffffff;
+  --ui-interactive: #3f5bd9;
+  --ui-interactive-fg: #ffffff;
+  --ui-backdrop: rgb(0 0 0 / 0.3);
+  --ui-shadow-popover: 0 4px 16px rgb(0 0 0 / 0.08);
+}
+
+[data-example-theme="chatgpt"][data-theme="dark"],
+[data-example-theme="chatgpt"] [data-theme="dark"] {
+  --ui-bg: #000000;
+  --ui-sidebar: #0d0d0d;
+  --ui-surface: #212121;
+  --ui-popover: #2a2a2a;
+  --ui-hover: #1c1c1c;
+  --ui-selected: #262626;
+  --ui-track: #262626;
+  --ui-field: rgb(255 255 255 / 0.13);
+  --ui-field-hover: rgb(255 255 255 / 0.17);
+  --ui-button: rgb(255 255 255 / 0.12);
+  --ui-button-hover: rgb(255 255 255 / 0.18);
+  --ui-border: #262626;
+  --ui-border-strong: #7a7a7a;
+  --ui-divider: rgb(255 255 255 / 0.1);
+  --ui-fg: #ececec;
+  --ui-muted: #b4b4b4;
+  --ui-subtle: #9b9b9b;
+  --ui-primary: #ffffff;
+  --ui-primary-fg: #0d0d0d;
+  --ui-accent: #7a8ff0;
+  --ui-accent-fg: #0d0d0d;
+  --ui-interactive: #7a8ff0;
+  --ui-interactive-fg: #0d0d0d;
+  --ui-backdrop: rgb(0 0 0 / 0.6);
+  --ui-shadow-popover: none;
+}

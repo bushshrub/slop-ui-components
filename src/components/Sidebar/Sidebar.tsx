@@ -102,7 +102,7 @@ export function AppShell({ sidebar, defaultCollapsed = false, forceDrawer, mobil
         ) : (
           <div
             className={cx(
-              'shrink-0 border-r border-divider transition-[width] duration-200',
+              'shrink-0 border-r border-divider motion-safe:transition-[width] motion-safe:duration-200',
               collapsed ? 'w-13' : 'w-(--ui-sidebar-width)',
             )}
           >

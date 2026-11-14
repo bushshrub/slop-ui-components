@@ -254,7 +254,7 @@ export function FileList({ files, onRemove, className }: FileListProps) {
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <div className="flex items-baseline gap-2">
                 {href !== undefined ? (
-                  <Link href={href} className="min-w-0 truncate rounded-xs text-ui leading-5 text-fg underline underline-offset-2 outline-none data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-focus">
+                  <Link href={href} className="min-w-0 truncate rounded-xs text-ui leading-6 text-fg underline underline-offset-2 outline-none data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-focus">
                     {name}
                   </Link>
                 ) : (
@@ -271,7 +271,7 @@ export function FileList({ files, onRemove, className }: FileListProps) {
                   aria-valuenow={progress}
                   className="h-progress overflow-hidden rounded-full bg-track"
                 >
-                  <div className="h-full rounded-full bg-progress transition-[width]" style={{ width: `${progress}%` }} />
+                  <div className="h-full rounded-full bg-progress motion-safe:transition-[width]" style={{ width: `${progress}%` }} />
                 </div>
               )}
             </div>
