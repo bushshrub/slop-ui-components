@@ -13,6 +13,12 @@ export interface ConfirmOptions {
   destructive?: boolean
   /** Longer content under the title. */
   body?: ReactNode
+  /** Label of the cancel button. Default "Cancel". */
+  cancelLabel?: string
+  /** Which button has focus on open. Default `cancel` when `destructive`; see `ConfirmModal`. */
+  autoFocus?: 'cancel' | 'confirm'
+  /** Image or node shown above `body`, e.g. a preview of what will be affected. */
+  media?: ReactNode
   /**
    * Runs when the user confirms, before the modal closes. If it returns a promise the buttons are held
    * until it settles; if it rejects the modal stays open.
@@ -93,6 +99,9 @@ export function ConfirmHost() {
       confirmLabel={options.confirmLabel ?? strings.ok}
       hideCancel={options.hideCancel}
       destructive={options.destructive}
+      cancelLabel={options.cancelLabel}
+      autoFocus={options.autoFocus}
+      media={options.media}
       onConfirm={async () => {
         await options.onConfirm?.()
         settle(true)

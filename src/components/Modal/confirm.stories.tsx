@@ -87,3 +87,62 @@ export const Alert: Story = {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   },
 }
+
+/** A destructive confirm opens with Cancel focused, so Enter cancels. `cancelLabel`, `autoFocus` and `media` are options. */
+export const FocusAndMedia: Story = {
+  name: 'Focus, cancel label and media',
+  render: () => {
+    const Inner = () => {
+      const [answer, setAnswer] = useState('Not asked yet')
+      return (
+        <div className="flex items-center gap-3 text-ui">
+          <ConfirmHost />
+          <Button
+            variant="danger"
+            onPress={async () => {
+              const ok = await confirm({
+                title: 'Delete deployment?',
+                description: 'This can’t be undone.',
+                confirmLabel: 'Delete deployment',
+                cancelLabel: 'Keep it',
+                destructive: true,
+                media: <div role="img" aria-label="Deployment preview" className="h-24 bg-selected" />,
+              })
+              setAnswer(ok ? 'Confirmed' : 'Cancelled')
+            }}
+          >
+            Delete deployment
+          </Button>
+          <span>{answer}</span>
+        </div>
+      )
+    }
+    return <Inner />
+  },
+  play: async ({ canvas, userEvent, step }) => {
+    await step('Enter on the focused Cancel does not confirm', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Delete deployment' }))
+      const dialog = await screen.findByRole('alertdialog', { name: 'Delete deployment?' })
+      await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Keep it' })).toHaveFocus())
+      await expect(within(dialog).getByRole('img', { name: 'Deployment preview' })).toBeInTheDocument()
+      await userEvent.keyboard('{Enter}')
+      await expect(await canvas.findByText('Cancelled')).toBeVisible()
+      await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument())
+    })
+  },
+}
+
+/** `autoFocus: 'confirm'` puts focus on the confirming button, for a safe, frequent action. */
+export const ConfirmFocused: Story = {
+  render: () => (
+    <div className="flex items-center gap-3 text-ui">
+      <ConfirmHost />
+      <Button onPress={() => confirm({ title: 'Publish changes?', confirmLabel: 'Publish', autoFocus: 'confirm' })}>Publish</Button>
+    </div>
+  ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Publish' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Publish changes?' })
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Publish' })).toHaveFocus())
+  },
+}

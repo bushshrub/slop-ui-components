@@ -32,6 +32,9 @@ export const defaultStrings = {
   expandSidebar: 'Expand sidebar',
   collapseSidebar: 'Collapse sidebar',
   sidebar: 'Sidebar',
+  openAside: 'Show details',
+  closeAside: 'Hide details',
+  aside: 'Details',
 
   // Pagination
   pagination: 'Pagination',

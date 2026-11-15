@@ -134,11 +134,35 @@ export interface ConfirmModalProps extends Omit<ModalProps, 'footer' | 'role' | 
   destructive?: boolean
   /** Only the confirming button, for a message that just needs acknowledging. */
   hideCancel?: boolean
+  /** Label of the cancel button. Default "Cancel". */
+  cancelLabel?: string
+  /**
+   * Which button has focus when the dialog opens, so Enter presses it. Default `cancel` when `destructive`, so a
+   * reflexive Enter cannot confirm a destructive action; otherwise the dialog itself has focus. With
+   * `hideCancel`, `cancel` focuses the only button.
+   */
+  autoFocus?: 'cancel' | 'confirm'
+  /** Image or other node shown at the top of the body, above `children`, e.g. a preview of what will be affected. */
+  media?: ReactNode
   children?: ReactNode
 }
 
-/** Two-button confirmation. Closes after `onConfirm` resolves. */
-export function ConfirmModal({ confirmLabel, onConfirm, destructive, hideCancel, children, size = 'sm', ...props }: ConfirmModalProps) {
+/**
+ * Two-button confirmation. Closes after `onConfirm` resolves. A `destructive` one opens with Cancel focused
+ * (see `autoFocus`).
+ */
+export function ConfirmModal({
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
+  destructive,
+  hideCancel,
+  autoFocus = destructive ? 'cancel' : undefined,
+  media,
+  children,
+  size = 'sm',
+  ...props
+}: ConfirmModalProps) {
   const strings = useStrings()
   const [pending, setPending] = useState(false)
   return (
@@ -149,12 +173,13 @@ export function ConfirmModal({ confirmLabel, onConfirm, destructive, hideCancel,
       footer={(close) => (
         <>
           {!hideCancel && (
-            <Button onPress={close} isDisabled={pending}>
-              {strings.cancel}
+            <Button onPress={close} isDisabled={pending} autoFocus={autoFocus === 'cancel'}>
+              {cancelLabel ?? strings.cancel}
             </Button>
           )}
           <Button
             variant={destructive ? 'danger' : 'primary'}
+            autoFocus={autoFocus === 'confirm' || (autoFocus === 'cancel' && hideCancel)}
             // Not disabled while pending: a disabled button would drop keyboard focus out of the dialog
             className={pending ? 'cursor-progress opacity-60' : undefined}
             onPress={async () => {
@@ -173,7 +198,12 @@ export function ConfirmModal({ confirmLabel, onConfirm, destructive, hideCancel,
         </>
       )}
     >
-      {children}
+      {(media || children) && (
+        <>
+          {media && <div className="overflow-hidden rounded-md [&_img]:block [&_img]:w-full">{media}</div>}
+          {children}
+        </>
+      )}
     </Modal>
   )
 }

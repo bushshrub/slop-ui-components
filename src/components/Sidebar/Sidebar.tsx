@@ -15,11 +15,15 @@ import {
   type ButtonProps as AriaButtonProps,
   type LinkProps,
 } from 'react-aria-components'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, PanelRight } from 'lucide-react'
 import { cx } from '../../lib/cx'
 import { useStrings } from '../../lib/strings'
 import { PHONE_QUERY, useMediaQuery } from '../../lib/useMediaQuery'
 import { IconButton } from '../Button/Button'
+import { Sheet } from '../Sheet/Sheet'
+
+/** Below this width the AppShell `aside` becomes a Sheet. */
+const ASIDE_QUERY = '(max-width: 1279px)'
 
 interface ShellState {
   /** Desktop: sidebar shrunk to an icon rail. */
@@ -29,6 +33,13 @@ interface ShellState {
   drawerOpen: boolean
   toggle: () => void
   closeDrawer: () => void
+  /** Whether the shell has an `aside`. */
+  hasAside: boolean
+  /** The aside is currently a Sheet (narrow) rather than a right panel. */
+  asideIsSheet: boolean
+  /** The aside Sheet is open. Always false when the aside is inline. */
+  asideOpen: boolean
+  toggleAside: () => void
 }
 
 const ShellContext = createContext<ShellState | null>(null)
@@ -49,16 +60,45 @@ export interface AppShellProps {
   forceDrawer?: boolean
   /** Next to the drawer's open button on phones, e.g. the page title. The button itself is always there. */
   mobileHeader?: ReactNode
+  /**
+   * Right panel, e.g. details of the selected item. Shown inline from 1280px up; under that it collapses to a
+   * Sheet that you open with `AsideToggle` or `useSidebar().toggleAside`.
+   */
+  aside?: ReactNode
+  /** Title of the aside. Names the inline panel and is the Sheet's heading. Default "Details". */
+  asideTitle?: string
+  /** Width of the inline aside. Default `20rem`. Any CSS length. */
+  asideWidth?: string
+  /** Force the aside to a Sheet regardless of width (mainly for stories and tests). */
+  forceAsideSheet?: boolean
   className?: string
   children: ReactNode
 }
 
 /**
- * Full-height layout with a left sidebar and a scrolling main area.
- * ⌘B / Ctrl+B toggles the sidebar.
+ * Full-height layout with a left sidebar and a scrolling main area, and optionally a right `aside`.
+ * ⌘B / Ctrl+B toggles the sidebar. The aside is a panel from 1280px up and a Sheet under it.
  */
-export function AppShell({ sidebar, defaultCollapsed = false, forceDrawer, mobileHeader, className, children }: AppShellProps) {
+export function AppShell({
+  sidebar,
+  defaultCollapsed = false,
+  forceDrawer,
+  mobileHeader,
+  aside,
+  asideTitle,
+  asideWidth = '20rem',
+  forceAsideSheet,
+  className,
+  children,
+}: AppShellProps) {
+  const strings = useStrings()
   const narrow = useMediaQuery(PHONE_QUERY)
+  const narrowAside = useMediaQuery(ASIDE_QUERY)
+  const hasAside = aside != null && aside !== false
+  const asideIsSheet = hasAside && (forceAsideSheet ?? narrowAside)
+  const [asideOpenState, setAsideOpen] = useState(false)
+  const asideOpen = asideIsSheet && asideOpenState
+  const toggleAside = useCallback(() => setAsideOpen((o) => !o), [])
   const isDrawer = forceDrawer ?? narrow
   const [collapsed, setCollapsed] = useState(defaultCollapsed)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -81,8 +121,8 @@ export function AppShell({ sidebar, defaultCollapsed = false, forceDrawer, mobil
   }, [toggle])
 
   const state = useMemo(
-    () => ({ collapsed: !isDrawer && collapsed, isDrawer, drawerOpen, toggle, closeDrawer }),
-    [isDrawer, collapsed, drawerOpen, toggle, closeDrawer],
+    () => ({ collapsed: !isDrawer && collapsed, isDrawer, drawerOpen, toggle, closeDrawer, hasAside, asideIsSheet, asideOpen, toggleAside }),
+    [isDrawer, collapsed, drawerOpen, toggle, closeDrawer, hasAside, asideIsSheet, asideOpen, toggleAside],
   )
 
   return (
@@ -119,6 +159,20 @@ export function AppShell({ sidebar, defaultCollapsed = false, forceDrawer, mobil
           )}
           {children}
         </main>
+        {hasAside && !asideIsSheet && (
+          <aside
+            aria-label={asideTitle ?? strings.aside}
+            style={{ width: asideWidth }}
+            className="shrink-0 overflow-y-auto border-l border-divider bg-surface"
+          >
+            {aside}
+          </aside>
+        )}
+        {hasAside && asideIsSheet && (
+          <Sheet title={asideTitle ?? strings.aside} isOpen={asideOpen} onOpenChange={setAsideOpen}>
+            {aside}
+          </Sheet>
+        )}
       </div>
     </ShellContext.Provider>
   )
@@ -148,6 +202,18 @@ export function SidebarToggle({ className }: { className?: string }) {
   return (
     <IconButton aria-label={label} onPress={toggle} className={className}>
       <SidebarIcon />
+    </IconButton>
+  )
+}
+
+/** Button that opens the aside Sheet. Renders nothing while the aside is inline or absent. */
+export function AsideToggle({ className, children }: { className?: string; children?: ReactNode }) {
+  const { hasAside, asideIsSheet, asideOpen, toggleAside } = useSidebar()
+  const strings = useStrings()
+  if (!hasAside || !asideIsSheet) return null
+  return (
+    <IconButton aria-label={asideOpen ? strings.closeAside : strings.openAside} onPress={toggleAside} className={className}>
+      {children ?? <PanelRight />}
     </IconButton>
   )
 }

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { FileText, Folder, Home, Inbox, Plus, Settings } from 'lucide-react'
 import { expect, screen, waitFor, within } from 'storybook/test'
 import { IconButton } from '../Button/Button'
-import { AppShell, Sidebar, SidebarItem, SidebarSection, SidebarUser, type AppShellProps } from './Sidebar'
+import { AppShell, AsideToggle, Sidebar, SidebarItem, SidebarSection, SidebarUser, type AppShellProps } from './Sidebar'
 
 function DemoSidebar() {
   return (
@@ -40,13 +40,13 @@ const meta = {
       description: {
         component:
           '`AppShell` lays out a left `Sidebar` and the main area. Wide screens show it inline and ⌘B collapses it to an ' +
-          'icon rail; under 768px it becomes a drawer. For a full app with recents and an account menu, see Examples/Chat app.',
+          'icon rail; under 768px it becomes a drawer. An optional `aside` is a right panel from 1280px up and a Sheet under it. For a full app with recents and an account menu, see Examples/Chat app.',
       },
       story: { inline: false, height: '480px' },
     },
   },
   args: { sidebar: <DemoSidebar />, children: null },
-  argTypes: { sidebar: { control: false }, children: { control: false }, mobileHeader: { control: false } },
+  argTypes: { sidebar: { control: false }, children: { control: false }, mobileHeader: { control: false }, aside: { control: false } },
   render: (args: AppShellProps) => (
     <AppShell {...args}>
       <div className="p-8 text-muted">Main content</div>
@@ -109,6 +109,51 @@ export const PhoneDrawerTest: Story = {
     await step('Picking a page closes it', async () => {
       await userEvent.click(screen.getByRole('link', { name: /Projects/ }))
       await waitFor(() => expect(screen.queryByRole('navigation', { name: 'Sidebar' })).not.toBeInTheDocument())
+    })
+  },
+}
+
+const details = (
+  <div className="flex flex-col gap-2 p-4 text-ui">
+    <h2 className="m-0 font-serif text-lg font-normal">Order #1042</h2>
+    <p className="m-0 text-muted">Shipped on 3 March to Lorem Ipsum.</p>
+  </div>
+)
+
+/** Wide screens: the aside is a right panel next to the main area. */
+export const WithAside: Story = {
+  name: 'With an aside',
+  args: { aside: details, asideTitle: 'Order details', forceAsideSheet: false },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('complementary', { name: 'Order details' })).toBeVisible()
+  },
+}
+
+/** Under 1280px the aside collapses into a Sheet that `AsideToggle` opens. */
+export const AsideAsSheet: Story = {
+  name: 'Aside as a sheet',
+  args: { aside: details, asideTitle: 'Order details', forceAsideSheet: true },
+  render: (args: AppShellProps) => (
+    <AppShell {...args}>
+      <div className="flex items-center gap-2 p-4">
+        <AsideToggle />
+        <span className="text-muted">Main content</span>
+      </div>
+    </AppShell>
+  ),
+  play: async ({ canvas, userEvent, step }) => {
+    await step('The panel is not inline', async () => {
+      await expect(canvas.queryByRole('complementary')).not.toBeInTheDocument()
+    })
+    await step('The toggle opens a sheet', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Show details' }))
+      const dialog = await screen.findByRole('dialog', { name: 'Order details' })
+      await waitFor(() => expect(dialog).toBeVisible())
+      await expect(within(dialog).getByText('Shipped on 3 March to Lorem Ipsum.')).toBeVisible()
+    })
+    await step('Close brings back the page', async () => {
+      await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Close' }))
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     })
   },
 }

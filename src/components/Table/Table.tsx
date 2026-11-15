@@ -4,6 +4,8 @@ import {
   Column as AriaColumn,
   Row as AriaRow,
   Table as AriaTable,
+  TableLayout,
+  Virtualizer,
   TableBody as AriaTableBody,
   TableHeader as AriaTableHeader,
   type Key,
@@ -158,6 +160,18 @@ export interface DataTableProps<T> extends Omit<TableProps, 'children'> {
   rowHref?: (row: T) => string | undefined
   /** Shown in place of the rows when there are none. */
   emptyState?: ReactNode
+  /**
+   * Renders only the rows in view, for thousands of rows. Rows must then be a fixed height (`rowHeight`) and the
+   * table scrolls itself, so give it a height (`height`, or a `className` with one). Off by default; the table
+   * is laid out as a normal one, with the same keyboard navigation and selection.
+   */
+  virtualized?: boolean
+  /** Height of every row in px when `virtualized`. Default 37: the standard row plus its divider. Match it if you change density. */
+  rowHeight?: number
+  /** Height of the header row in px when `virtualized`. Default 33. */
+  headingHeight?: number
+  /** Height of the scrolling table when `virtualized`, any CSS length. Default `24rem`. */
+  height?: string
 }
 
 /**
@@ -165,10 +179,26 @@ export interface DataTableProps<T> extends Omit<TableProps, 'children'> {
  * Takes every `Table` prop (`aria-label`, `sortDescriptor`, `selectionMode` ...). Compose `Table` by hand
  * when rows differ from each other or cells need their own props.
  */
-export function DataTable<T>({ columns, rows, rowKey, onRowPress, rowHref, emptyState, ...props }: DataTableProps<T>) {
+export function DataTable<T>({
+  columns,
+  rows,
+  rowKey,
+  onRowPress,
+  rowHref,
+  emptyState,
+  virtualized,
+  rowHeight = 37,
+  headingHeight = 33,
+  height = '24rem',
+  ...props
+}: DataTableProps<T>) {
   const rowHeader = columns.find((c) => c.isRowHeader)?.id ?? columns[0]?.id
-  return (
-    <Table {...props}>
+  const table = (
+    <Table
+      {...props}
+      className={cx(virtualized && 'block overflow-auto', props.className)}
+      style={virtualized ? { height } : undefined}
+    >
       <TableHeader>
         {columns.map((c) => (
           <Column
@@ -195,5 +225,11 @@ export function DataTable<T>({ columns, rows, rowKey, onRowPress, rowHref, empty
         ))}
       </TableBody>
     </Table>
+  )
+  if (!virtualized) return table
+  return (
+    <Virtualizer layout={TableLayout} layoutOptions={{ rowHeight, headingHeight }}>
+      {table}
+    </Virtualizer>
   )
 }
