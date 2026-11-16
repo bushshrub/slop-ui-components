@@ -131,3 +131,13 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+/* Forced colors (Windows High Contrast) does not paint box-shadow, so the `ring-*` focus rings vanish. Draw a real outline
+   instead. Left outside any layer so it beats Tailwind's `outline-none` and the components' own outline utilities. */
+@media (forced-colors: active) {
+  [data-focus-visible],
+  :focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
+}

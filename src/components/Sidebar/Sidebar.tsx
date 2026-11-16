@@ -292,7 +292,8 @@ export function SidebarItem({ icon, isActive, shortcut, badge, children, ...prop
       className={cx(
         'group flex min-h-row touch:min-h-control-touch cursor-default items-center gap-2.5 rounded-sm px-2 text-ui leading-5 text-fg no-underline outline-none',
         'data-hovered:bg-hover data-pressed:bg-selected data-focus-visible:ring-2 data-focus-visible:ring-focus',
-        isActive && 'bg-selected',
+        // Forced colors drops the fill: outline the current page
+        isActive && 'bg-selected forced-colors:outline-solid forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]',
         collapsed && 'w-control justify-center px-0',
       )}
     >

@@ -47,6 +47,8 @@ export function RadioCards({ label, description, errorMessage, options, columns 
               'data-hovered:border-border-strong data-focus-visible:ring-2 data-focus-visible:ring-focus',
               'data-selected:border-interactive data-selected:ring-1 data-selected:ring-interactive data-selected:data-focus-visible:ring-2 data-selected:data-focus-visible:ring-focus',
               'data-disabled:cursor-not-allowed data-disabled:opacity-50',
+              // The ring is not painted in forced colors; an outline marks the chosen card
+              'forced-colors:data-selected:outline-solid forced-colors:data-selected:outline-2 forced-colors:data-selected:-outline-offset-1 forced-colors:data-selected:outline-[Highlight]',
             )}
           >
             <span className="flex items-center gap-2">
@@ -57,7 +59,7 @@ export function RadioCards({ label, description, errorMessage, options, columns 
                 aria-hidden
                 className="flex size-check shrink-0 items-center justify-center rounded-full border border-border-strong group-data-selected:border-interactive"
               >
-                <span className="size-[calc(var(--ui-check)*0.45)] rounded-full bg-interactive opacity-0 group-data-selected:opacity-100" />
+                <span className="size-[calc(var(--ui-check)*0.45)] rounded-full bg-interactive opacity-0 group-data-selected:opacity-100 forced-colors:forced-color-adjust-none forced-colors:bg-[Highlight]" />
               </span>
             </span>
             {o.description && <span className="text-ui-sm leading-4 text-muted">{o.description}</span>}

@@ -17,7 +17,9 @@ export const placeholder = 'placeholder:text-subtle'
 /** Row in a dropdown list (Select, ComboBox). */
 export const listOption =
   'group flex min-h-row cursor-default items-center gap-2 rounded-sm px-2 py-1 text-ui leading-5 outline-none in-data-sheet:min-h-control-touch touch:min-h-control-touch ' +
-  'data-disabled:opacity-50 data-hovered:bg-hover data-focus-visible:bg-hover data-pressed:bg-hover'
+  'data-disabled:opacity-50 data-hovered:bg-hover data-focus-visible:bg-hover data-pressed:bg-hover ' +
+  // ComboBox keeps real focus in the input, so its active option is only marked by a fill
+  'forced-colors:data-focused:outline-solid forced-colors:data-focused:outline-2 forced-colors:data-focused:-outline-offset-2 forced-colors:data-focused:outline-[Highlight]'
 
 /** Floating panel under a field. Matches the field's width. */
 export const listPopover =

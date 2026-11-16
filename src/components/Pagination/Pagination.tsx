@@ -97,7 +97,7 @@ export function Pagination({ page, pageCount, onPageChange, siblingCount = 1, to
                 onPress={() => go(item)}
                 className={cx(
                   pageButton,
-                  item === current ? 'bg-selected text-fg' : 'text-muted data-hovered:bg-hover data-pressed:bg-selected',
+                  item === current ? 'bg-selected text-fg forced-colors:outline-solid forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]' : 'text-muted data-hovered:bg-hover data-pressed:bg-selected',
                 )}
               >
                 {item}

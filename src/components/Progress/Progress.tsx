@@ -18,7 +18,9 @@ const fills: Record<ProgressTone, string> = {
   danger: 'bg-danger',
 }
 
-const track = 'h-progress w-full overflow-hidden rounded-full bg-track'
+// Forced colors drops fills: the track gets an outline, and fills keep their colour so the value stays readable
+const track = 'h-progress w-full overflow-hidden rounded-full bg-track forced-colors:outline-solid forced-colors:outline-1 forced-colors:outline-[ButtonText]'
+const keepFill = 'forced-colors:forced-color-adjust-none'
 
 function Header({ label, valueText, showValue }: { label?: ReactNode; valueText?: string; showValue: boolean }) {
   if (!label && !showValue) return null
@@ -49,10 +51,10 @@ export function ProgressBar({ label, showValue, tone = 'default', className, ...
           <div className={track}>
             {isIndeterminate ? (
               // Sliding segment; holds still at the start when reduced motion is on
-              <div className={cx('h-full w-2/5 rounded-full motion-safe:animate-indeterminate motion-reduce:w-full motion-reduce:animate-pulse', fills[tone])} />
+              <div className={cx('h-full w-2/5 rounded-full motion-safe:animate-indeterminate forced-colors:bg-[Highlight]', keepFill, fills[tone])} />
             ) : (
               <div
-                className={cx('h-full rounded-full motion-safe:transition-[width] motion-safe:duration-300', fills[tone])}
+                className={cx('h-full rounded-full motion-safe:transition-[width] motion-safe:duration-300 forced-colors:bg-[Highlight]', keepFill, fills[tone])}
                 style={{ width: `${percentage}%` }}
               />
             )}
@@ -83,7 +85,7 @@ export function Meter({ label, showValue, tone, className, ...props }: MeterProp
             <Header label={label} valueText={valueText} showValue={showValue ?? !!label} />
             <div className={track}>
               <div
-                className={cx('h-full rounded-full motion-safe:transition-[width] motion-safe:duration-300', fills[tone ?? auto])}
+                className={cx('h-full rounded-full motion-safe:transition-[width] motion-safe:duration-300 forced-colors:bg-[Highlight]', keepFill, fills[tone ?? auto])}
                 style={{ width: `${percentage}%` }}
               />
             </div>
@@ -161,13 +163,13 @@ export function StackedMeter({
         aria-valuenow={used}
         aria-valuetext={strings.valueOfMax(formatValue(used), formatValue(max))}
         // 1px gaps show the surface, so neighbors read as separate parts even in similar colors
-        className={cx(track, 'flex gap-px')}
+        className={cx(track, 'flex gap-px forced-colors:gap-0.5')}
       >
         {segments.map((s, i) =>
           s.value > 0 ? (
             <span
               key={s.id}
-              className={cx('h-full min-w-0.5 motion-safe:transition-[width] motion-safe:duration-300', color(s, i))}
+              className={cx('h-full min-w-0.5 motion-safe:transition-[width] motion-safe:duration-300', keepFill, color(s, i))}
               style={{ width: `${(s.value / max) * 100}%`, background: s.color }}
             />
           ) : null,
@@ -177,7 +179,7 @@ export function StackedMeter({
         <ul className="m-0 mt-2 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-ui-sm leading-4">
           {segments.map((s, i) => (
             <li key={s.id} className="flex items-center gap-1.5">
-              <span className={cx('size-2 shrink-0 rounded-full', color(s, i))} style={{ background: s.color }} />
+              <span className={cx('size-2 shrink-0 rounded-full', keepFill, color(s, i))} style={{ background: s.color }} />
               <span className="text-fg">{s.label}</span>
               <span className="text-muted tabular-nums">{formatValue(s.value)}</span>
             </li>
@@ -188,7 +190,7 @@ export function StackedMeter({
         <ul className="m-0 mt-3 flex list-none flex-col gap-1 p-0 text-ui leading-5 text-muted">
           {[...segments.map((s, i) => ({ ...s, swatch: color(s, i) })), ...(free > 0 && maxValue != null ? [{ id: '__free', label: freeLabel ?? strings.free, value: free, color: undefined, swatch: 'bg-track ring-1 ring-inset ring-border-strong' }] : [])].map((s) => (
             <li key={s.id} className="flex items-center gap-2.5">
-              <span aria-hidden className={cx('size-2.5 shrink-0 rounded-[2px]', s.swatch)} style={{ background: s.color }} />
+              <span aria-hidden className={cx('size-2.5 shrink-0 rounded-[2px]', keepFill, s.swatch)} style={{ background: s.color }} />
               <span className="min-w-0 flex-1 truncate">{s.label}</span>
               <span className="tabular-nums">{formatValue(s.value)}</span>
               <span className="w-10 text-right tabular-nums">{percent(s.value, max)}</span>

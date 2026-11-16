@@ -44,7 +44,7 @@ const fieldRow = cx(fieldBox, 'flex h-control w-full min-w-0 items-center gap-1 
 
 const segmentClass = cx(
   'rounded-sm px-px whitespace-nowrap tabular-nums outline-none data-placeholder:text-subtle',
-  'data-focused:bg-interactive data-focused:text-interactive-fg',
+  'data-focused:bg-interactive data-focused:text-interactive-fg forced-colors:data-focused:outline-solid forced-colors:data-focused:outline-2 forced-colors:data-focused:outline-[Highlight]',
 )
 
 // A one-digit day or month is too narrow to tap, so touch screens get a minimum width. Not the separators between them.

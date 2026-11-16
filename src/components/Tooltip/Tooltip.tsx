@@ -24,7 +24,7 @@ export interface TooltipProps extends Omit<AriaTooltipProps, 'className' | 'chil
 
 /** Bubble look shared by Tooltip and Toggletip. */
 export const bubbleClass =
-  'group flex items-center gap-2 rounded-sm bg-tooltip px-2 py-1 text-ui-sm leading-4 text-tooltip-fg outline-none motion-safe:data-entering:animate-pop-in'
+  'group flex items-center gap-2 rounded-sm bg-tooltip px-2 py-1 text-ui-sm leading-4 text-tooltip-fg outline-none forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText] motion-safe:data-entering:animate-pop-in'
 
 /** Arrow that points at the trigger on any side; the parent needs `group` and a data-placement attribute. */
 export function TooltipArrow() {
@@ -35,7 +35,7 @@ export function TooltipArrow() {
         height="8"
         viewBox="0 0 8 8"
         aria-hidden
-        className="block fill-tooltip group-data-[placement=bottom]:rotate-180 group-data-[placement=left]:-rotate-90 group-data-[placement=right]:rotate-90"
+        className="block fill-tooltip forced-colors:fill-[Canvas] group-data-[placement=bottom]:rotate-180 group-data-[placement=left]:-rotate-90 group-data-[placement=right]:rotate-90"
       >
         <path d="M0 0 L4 4 L8 0" />
       </svg>

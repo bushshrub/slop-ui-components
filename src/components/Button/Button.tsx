@@ -22,11 +22,11 @@ const base =
   'data-disabled:cursor-not-allowed data-disabled:opacity-50 [&_svg]:size-icon [&_svg]:shrink-0'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-primary-fg data-hovered:opacity-90 data-pressed:opacity-80',
-  secondary: 'bg-button text-button-fg data-hovered:bg-button-hover data-pressed:bg-button-hover',
+  primary: 'bg-primary text-primary-fg forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText] data-hovered:opacity-90 data-pressed:opacity-80',
+  secondary: 'bg-button text-button-fg forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText] data-hovered:bg-button-hover data-pressed:bg-button-hover',
   outline: 'border border-border-strong text-fg data-hovered:bg-hover data-pressed:bg-selected',
   ghost: 'text-fg data-hovered:bg-hover data-pressed:bg-selected',
-  danger: 'bg-danger text-danger-fg data-hovered:opacity-90 data-pressed:opacity-80',
+  danger: 'bg-danger text-danger-fg forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText] data-hovered:opacity-90 data-pressed:opacity-80',
 }
 
 // Heights come from the --ui-control* tokens. On touch (coarse pointer or under 768px, see theme.css) md and lg reach

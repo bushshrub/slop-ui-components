@@ -71,7 +71,7 @@ export function SegmentedControl<K extends Key = Key>({
       }}
       className={cx(
         // max-w-full: never wider than the container; text segments shrink and truncate instead
-        'relative inline-flex max-w-full gap-0.5 rounded-sm bg-track p-0.5 data-disabled:opacity-50',
+        'relative inline-flex max-w-full gap-0.5 rounded-sm bg-track p-0.5 data-disabled:opacity-50 forced-colors:outline-solid forced-colors:outline-1 forced-colors:outline-[ButtonText]',
         fullWidth && 'flex w-full',
         !label && className,
       )}
@@ -80,7 +80,7 @@ export function SegmentedControl<K extends Key = Key>({
       <span
         aria-hidden
         style={thumb}
-        className="pointer-events-none absolute top-0.5 bottom-0.5 left-0 rounded-[calc(var(--ui-radius-sm)-2px)] bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.08)] motion-safe:transition-[translate,width] motion-safe:duration-200 motion-safe:ease-out"
+        className="pointer-events-none absolute top-0.5 bottom-0.5 left-0 rounded-[calc(var(--ui-radius-sm)-2px)] bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.08)] motion-safe:transition-[translate,width] motion-safe:duration-200 motion-safe:ease-out forced-colors:border-2 forced-colors:border-[Highlight]"
       />
       {options.map((o) => (
         <ToggleButton

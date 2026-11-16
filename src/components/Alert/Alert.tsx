@@ -37,7 +37,7 @@ export function Alert({ tone = 'info', title, children, icon, action, onDismiss,
   return (
     <div
       role={urgent ? 'alert' : 'status'}
-      className={cx('flex items-start gap-3 rounded-md p-3 text-ui leading-5 text-fg', t.box, className)}
+      className={cx('flex items-start gap-3 rounded-md p-3 text-ui leading-5 text-fg forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText]', t.box, className)}
     >
       {icon !== false && (
         <span className={cx('mt-0.5 flex shrink-0 [&_svg]:size-icon', t.icon)}>{icon ?? <t.Icon />}</span>

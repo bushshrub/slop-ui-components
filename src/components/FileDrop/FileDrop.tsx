@@ -269,9 +269,9 @@ export function FileList({ files, onRemove, className }: FileListProps) {
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={progress}
-                  className="h-progress overflow-hidden rounded-full bg-track"
+                  className="h-progress overflow-hidden rounded-full bg-track forced-colors:outline-solid forced-colors:outline-1 forced-colors:outline-[ButtonText]"
                 >
-                  <div className="h-full rounded-full bg-progress motion-safe:transition-[width]" style={{ width: `${progress}%` }} />
+                  <div className="h-full rounded-full bg-progress motion-safe:transition-[width] forced-colors:forced-color-adjust-none forced-colors:bg-[Highlight]" style={{ width: `${progress}%` }} />
                 </div>
               )}
             </div>

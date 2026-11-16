@@ -30,9 +30,11 @@ export function Switch({ children, description, toggleSide = 'start', className,
           // Sized from --ui-switch: track is 1.75x as wide as tall, the knob travels the difference
           'flex h-(--ui-switch) w-[calc(var(--ui-switch)*1.75)] shrink-0 items-center rounded-full bg-border-strong p-0.5 motion-safe:transition-colors',
           'group-data-selected:bg-interactive group-data-focus-visible:ring-2 group-data-focus-visible:ring-focus',
+          // Forced colors drops fills: outline the track, fill it with Highlight when on, and flip the knob so it stays visible
+          'forced-colors:forced-color-adjust-none forced-colors:bg-[Canvas] forced-colors:outline-solid forced-colors:outline-1 forced-colors:outline-[ButtonText] forced-colors:group-data-selected:bg-[Highlight]',
         )}
       >
-        <span className="size-[calc(var(--ui-switch)-0.25rem)] rounded-full bg-knob shadow-sm motion-safe:transition-transform group-data-selected:translate-x-[calc(var(--ui-switch)*0.75)]" />
+        <span className="size-[calc(var(--ui-switch)-0.25rem)] rounded-full bg-knob shadow-sm transition-transform group-data-selected:translate-x-[calc(var(--ui-switch)*0.75)] forced-colors:bg-[ButtonText] forced-colors:group-data-selected:bg-[HighlightText]" />
       </span>
       {description ? (
         <span className="flex min-w-0 flex-col">

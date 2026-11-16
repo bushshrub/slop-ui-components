@@ -91,6 +91,8 @@ export function Row<T extends object>({ className, ...props }: Omit<RowProps<T>,
       className={cx(
         'border-b border-divider outline-none data-hovered:bg-hover data-selected:bg-selected',
         'data-focus-visible:outline-2 data-focus-visible:-outline-offset-2 data-focus-visible:outline-focus',
+        // Forced colors drops the selected fill: outline the row instead
+        'forced-colors:data-selected:outline-solid forced-colors:data-selected:outline-2 forced-colors:data-selected:-outline-offset-2 forced-colors:data-selected:outline-[Highlight]',
         className,
       )}
     />

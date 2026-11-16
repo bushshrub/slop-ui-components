@@ -77,7 +77,7 @@ export function Badge({ tone = 'neutral', variant = 'soft', color, dot, icon, si
       {...props}
       style={customColor ? ({ '--badge-color': customColor, ...style } as CSSProperties) : style}
       className={cx(
-        'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-sans font-medium [&_svg]:size-[1em] [&_svg]:shrink-0',
+        'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full font-sans font-medium [&_svg]:size-[1em] [&_svg]:shrink-0 forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText]',
         size === 'sm' ? 'h-[calc(var(--ui-icon)+0.125rem)] px-2 text-ui-sm' : 'h-[calc(var(--ui-icon)+0.5rem)] px-2.5 text-ui-sm',
         customColor && variant !== 'solid' ? custom[variant] : tones[tone],
         className,
@@ -86,7 +86,7 @@ export function Badge({ tone = 'neutral', variant = 'soft', color, dot, icon, si
       {dot && (
         <span
           aria-hidden
-          className={cx('size-1.5 shrink-0 rounded-full', variant === 'solid' ? 'bg-current' : customColor ? 'bg-(--badge-color)' : dotColor[tone])}
+          className={cx('size-1.5 shrink-0 rounded-full forced-colors:bg-[CanvasText]', variant === 'solid' ? 'bg-current' : customColor ? 'bg-(--badge-color)' : dotColor[tone])}
         />
       )}
       {icon}
@@ -113,7 +113,7 @@ export function CountBadge({ count, max = 99, showZero, tone = 'accent', classNa
     <span
       {...props}
       className={cx(
-        'inline-flex h-[calc(var(--ui-icon)+0.125rem)] min-w-[calc(var(--ui-icon)+0.125rem)] shrink-0 items-center justify-center rounded-full px-1.5 font-sans text-ui-sm font-medium tabular-nums',
+        'inline-flex h-[calc(var(--ui-icon)+0.125rem)] min-w-[calc(var(--ui-icon)+0.125rem)] shrink-0 items-center justify-center rounded-full px-1.5 font-sans text-ui-sm font-medium tabular-nums forced-colors:outline-solid forced-colors:outline-1 forced-colors:-outline-offset-1 forced-colors:outline-[ButtonText]',
         tone === 'neutral' ? 'bg-button text-fg' : solid[tone],
         className,
       )}

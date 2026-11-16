@@ -50,6 +50,8 @@ export function GridListItem<T extends object>({ className, ...props }: GridList
         'data-hovered:bg-hover data-selected:bg-selected data-pressed:bg-selected',
         'data-focus-visible:outline-2 data-focus-visible:-outline-offset-2 data-focus-visible:outline-focus',
         'data-disabled:cursor-not-allowed data-disabled:opacity-50',
+        // Forced colors drops the selected and drop-target fills: outline the item instead
+        'forced-colors:data-drop-target:outline-solid forced-colors:data-drop-target:outline-2 forced-colors:data-selected:outline-solid forced-colors:data-selected:outline-2 forced-colors:data-drop-target:-outline-offset-2 forced-colors:data-selected:-outline-offset-2 forced-colors:data-drop-target:outline-[Highlight] forced-colors:data-selected:outline-[Highlight]',
         'data-dragging:opacity-50 data-drop-target:border-focus data-drop-target:bg-selected',
         className,
       )}

@@ -41,8 +41,8 @@ export function Slider({ label, description, showValue = true, showSteps, classN
       <SliderTrack className="relative flex h-(--ui-switch) w-full cursor-pointer items-center touch:h-control-touch data-disabled:cursor-not-allowed data-disabled:opacity-50">
         {({ state }) => (
           <>
-            <div className="absolute inset-x-0 top-1/2 h-progress -translate-y-1/2 rounded-full bg-border-strong" />
-            <SliderFill className="absolute top-1/2 !h-progress -translate-y-1/2 rounded-full bg-interactive" />
+            <div className="absolute inset-x-0 top-1/2 h-progress -translate-y-1/2 rounded-full bg-border-strong forced-colors:forced-color-adjust-none forced-colors:bg-[GrayText]" />
+            <SliderFill className="absolute top-1/2 !h-progress -translate-y-1/2 rounded-full bg-interactive forced-colors:forced-color-adjust-none forced-colors:bg-[Highlight]" />
             {marks.map((offset) => (
               <span
                 key={offset}
@@ -55,7 +55,7 @@ export function Slider({ label, description, showValue = true, showSteps, classN
               <SliderThumb
                 key={index}
                 index={index}
-                className="absolute top-1/2 size-(--ui-switch) rounded-full border border-border-strong bg-knob shadow-sm outline-none touch:size-control-touch data-focus-visible:ring-2 data-focus-visible:ring-focus"
+                className="absolute top-1/2 size-(--ui-switch) rounded-full border border-border-strong bg-knob shadow-sm outline-none forced-colors:border-2 touch:size-control-touch data-focus-visible:ring-2 data-focus-visible:ring-focus"
               />
             ))}
           </>

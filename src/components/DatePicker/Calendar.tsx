@@ -39,14 +39,14 @@ const daySquare = cx(
   'group-data-unavailable:text-subtle group-data-unavailable:line-through',
 )
 
-const daySelected = 'group-data-selected:bg-interactive group-data-selected:font-medium group-data-selected:text-interactive-fg'
+const daySelected = 'group-data-selected:bg-interactive group-data-selected:font-medium group-data-selected:text-interactive-fg forced-colors:group-data-selected:outline-solid forced-colors:group-data-selected:outline-2 forced-colors:group-data-selected:-outline-offset-2 forced-colors:group-data-selected:outline-[Highlight]'
 // In a range only the endpoints are solid; the days between them get the soft strip instead
 const dayEndpoint =
-  'group-data-selection-start:bg-interactive group-data-selection-end:bg-interactive group-data-selection-start:text-interactive-fg group-data-selection-end:text-interactive-fg group-data-selection-start:font-medium group-data-selection-end:font-medium'
+  'group-data-selection-start:bg-interactive group-data-selection-end:bg-interactive group-data-selection-start:text-interactive-fg group-data-selection-end:text-interactive-fg group-data-selection-start:font-medium group-data-selection-end:font-medium forced-colors:group-data-selection-start:outline-solid forced-colors:group-data-selection-start:outline-2 forced-colors:group-data-selection-end:outline-solid forced-colors:group-data-selection-end:outline-2 forced-colors:group-data-selection-start:-outline-offset-2 forced-colors:group-data-selection-end:-outline-offset-2 forced-colors:group-data-selection-start:outline-[Highlight] forced-colors:group-data-selection-end:outline-[Highlight]'
 
 // Tinted strip behind a range. It starts at the middle of the start day and ends at the middle of the end day.
 const rangeStrip = cx(
-  'pointer-events-none absolute inset-y-0 inset-x-0 hidden bg-interactive/15',
+  'pointer-events-none absolute inset-y-0 inset-x-0 hidden bg-interactive/15 forced-colors:border-y-2 forced-colors:border-[Highlight]',
   'group-data-selected:block group-data-selection-start:left-1/2 group-data-selection-end:right-1/2',
 )
 

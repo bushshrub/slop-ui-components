@@ -38,10 +38,11 @@ const indicatorBase =
   'flex size-[calc(var(--ui-icon)*1.5)] shrink-0 items-center justify-center rounded-full text-ui-sm font-medium tabular-nums [&_svg]:size-icon'
 
 const indicatorTone: Record<StepStatus, string> = {
-  complete: 'bg-interactive text-interactive-fg',
-  current: 'bg-interactive text-interactive-fg',
+  // Forced colors drops the fills: complete and error keep their icon, the current step gets a thick Highlight ring
+  complete: 'bg-interactive text-interactive-fg forced-colors:border forced-colors:border-[ButtonText]',
+  current: 'bg-interactive text-interactive-fg forced-colors:border-3 forced-colors:border-[Highlight]',
   upcoming: 'border border-border-strong text-muted',
-  error: 'bg-danger text-danger-fg',
+  error: 'bg-danger text-danger-fg forced-colors:border forced-colors:border-[ButtonText]',
 }
 
 const titleTone: Record<StepStatus, string> = {
@@ -86,7 +87,7 @@ export function Stepper({
           const status: StepStatus = step.status ?? (i < currentStep ? 'complete' : i === currentStep ? 'current' : 'upcoming')
           const isCurrent = i === currentStep
           const canPress = onStepChange !== undefined && !isCurrent && (i < currentStep || allowJump)
-          const connectorTone = i < currentStep ? 'bg-interactive' : 'bg-border-strong'
+          const connectorTone = i < currentStep ? 'bg-interactive forced-colors:bg-[Highlight]' : 'bg-border-strong forced-colors:bg-[GrayText]'
           const indicator = (
             <span className={cx(indicatorBase, indicatorTone[status])}>
               {status === 'complete' ? <Check /> : status === 'error' ? <CircleAlert /> : i + 1}
