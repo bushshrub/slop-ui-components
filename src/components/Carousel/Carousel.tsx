@@ -218,7 +218,7 @@ export function Carousel({
                   className="relative flex size-icon cursor-default items-center justify-center rounded-full outline-none data-focus-visible:ring-2 data-focus-visible:ring-focus touch:size-control-touch"
                 >
                   <span
-                    className={cx('size-1.5 rounded-full transition-colors', i === active ? 'bg-fg forced-colors:size-2.5 forced-colors:bg-[Highlight]' : 'bg-border-strong forced-colors:bg-[GrayText]', 'forced-colors:forced-color-adjust-none')}
+                    className={cx('size-1.5 rounded-full motion-safe:transition-colors', i === active ? 'bg-fg forced-colors:size-2.5 forced-colors:bg-[Highlight]' : 'bg-border-strong forced-colors:bg-[GrayText]', 'forced-colors:forced-color-adjust-none')}
                   />
                 </AriaButton>
               ))}

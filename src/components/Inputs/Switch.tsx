@@ -34,7 +34,7 @@ export function Switch({ children, description, toggleSide = 'start', className,
           'forced-colors:forced-color-adjust-none forced-colors:bg-[Canvas] forced-colors:outline-solid forced-colors:outline-1 forced-colors:outline-[ButtonText] forced-colors:group-data-selected:bg-[Highlight]',
         )}
       >
-        <span className="size-[calc(var(--ui-switch)-0.25rem)] rounded-full bg-knob shadow-sm transition-transform group-data-selected:translate-x-[calc(var(--ui-switch)*0.75)] forced-colors:bg-[ButtonText] forced-colors:group-data-selected:bg-[HighlightText]" />
+        <span className="size-[calc(var(--ui-switch)-0.25rem)] rounded-full bg-knob shadow-sm motion-safe:transition-transform group-data-selected:translate-x-[calc(var(--ui-switch)*0.75)] forced-colors:bg-[ButtonText] forced-colors:group-data-selected:bg-[HighlightText]" />
       </span>
       {description ? (
         <span className="flex min-w-0 flex-col">
