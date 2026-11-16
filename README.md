@@ -53,7 +53,7 @@ import { Button, NumberField, Modal } from 'slop-ui-components'
 | Overlays   | Menu, MenuList, Modal, ConfirmModal, `confirm()`, `alert()`, Sheet, Drawer, Popover, Tooltip, Toggletip, CommandPalette                               |
 | Feedback   | Toast, Alert, Spinner, Skeleton, ProgressBar, Meter, StackedMeter, EmptyState                               |
 | Navigation | Tabs, Breadcrumbs, Pagination, Stepper                                                                      |
-| Layout     | AppShell, Sidebar, Card, SettingsGroup, SettingsRow, Carousel, Disclosure, Heading, PageHeader                                          |
+| Layout     | AppShell, Sidebar, SplitView, DetailPane, Card, SettingsGroup, SettingsRow, Carousel, Disclosure, Heading, PageHeader                                          |
 | Data       | Table, DataTable, Badge, CountBadge, Kbd, Highlight                                                                               |
 
 Storybook has a page for each, plus larger examples (a chat app, ChatGPT-style and Claude-style chat interfaces, a settings dialog):
