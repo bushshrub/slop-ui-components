@@ -56,7 +56,8 @@ import { Button, NumberField, Modal } from 'slop-ui-components'
 | Layout     | AppShell, Sidebar, SplitView, DetailPane, Card, SettingsGroup, SettingsRow, Carousel, Disclosure, Heading, PageHeader                                          |
 | Data       | Table, DataTable, Badge, CountBadge, Kbd, Highlight                                                                               |
 
-Storybook has a page for each, plus larger examples (a chat app, ChatGPT-style and Claude-style chat interfaces, a settings dialog):
+Storybook has a page for each, plus larger examples (a chat app, ChatGPT-style and Claude-style chat interfaces, a settings dialog).
+The latest release's Storybook is online at https://bushshrub.github.io/slop-ui-components/. To run it locally:
 
 ```sh
 pnpm install

@@ -27,5 +27,6 @@ This is a shared library: components must work in any app, not the one that aske
 ## Releases
 
 Bump `version` in `package.json`, commit as `Release vX.Y.Z`, tag `vX.Y.Z`, and push the commit and the tag.
-`.github/workflows/release.yml` then runs typecheck, lint and the tests, and creates the GitHub release for the
-tag if they pass. Do not create the release by hand. The package is not published to npm.
+`.github/workflows/release.yml` then runs typecheck, lint and the tests, creates the GitHub release for the tag if
+they pass, and publishes the Storybook to GitHub Pages (`pages.yml`). Do not create the release by hand. The
+package is not published to npm.

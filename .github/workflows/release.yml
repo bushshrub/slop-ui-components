@@ -1,6 +1,7 @@
 name: Release
 
-# Pushing a vX.Y.Z tag runs the CI checks and, if they pass, creates the GitHub release for that tag.
+# Pushing a vX.Y.Z tag runs the CI checks and, if they pass, creates the GitHub release for that tag and publishes
+# the Storybook to GitHub Pages (pages.yml).
 on:
   push:
     tags: ['v*.*.*']
@@ -32,3 +33,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+
+  storybook:
+    needs: release
+    uses: ./.github/workflows/pages.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
