@@ -11,7 +11,7 @@ import {
 import { X } from 'lucide-react'
 import { cx } from '../../lib/cx'
 import { useStrings } from '../../lib/strings'
-import { PHONE_QUERY, useMediaQuery } from '../../lib/useMediaQuery'
+import { PHONE_QUERY, REDUCED_MOTION_QUERY, useMediaQuery } from '../../lib/useMediaQuery'
 import { IconButton } from '../Button/Button'
 
 /** `auto` opens as a sheet under 768px and in place otherwise; `always` / `never` force it. */
@@ -83,6 +83,7 @@ export function SheetPopover({ children, drillIn }: { children: ReactNode; drill
 function SheetPanel({ children }: { children: ReactNode }) {
   const state = useContext(OverlayTriggerStateContext)
   const [drag, setDrag] = useState<number | null>(null)
+  const reduceMotion = useMediaQuery(REDUCED_MOTION_QUERY)
   const startY = useRef(0)
 
   const handlers: DragHandlers = {
@@ -113,7 +114,7 @@ function SheetPanel({ children }: { children: ReactNode }) {
       // Follow the finger while dragging, ease back if let go early
       style={{
         transform: drag ? `translateY(${drag}px)` : undefined,
-        transition: drag === null ? 'transform 150ms ease-out' : 'none',
+        transition: drag === null && !reduceMotion ? 'transform 150ms ease-out' : 'none',
       }}
     >
       <SheetDragContext.Provider value={handlers}>{children}</SheetDragContext.Provider>

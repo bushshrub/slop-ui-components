@@ -39,12 +39,12 @@ export interface TagGroupProps extends Omit<AriaTagGroupProps, 'className' | 'ch
 // Same height and tint as a neutral Badge, with a remove button when the group allows removal
 const tagClass =
   'flex h-[calc(var(--ui-icon)+0.5rem)] min-w-0 shrink-0 items-center gap-1 rounded-full bg-button px-2.5 py-0.5 ' +
-  'font-sans text-ui-sm font-medium whitespace-nowrap text-fg outline-none transition-colors ' +
+  'font-sans text-ui-sm font-medium whitespace-nowrap text-fg outline-none motion-safe:transition-colors ' +
   'data-disabled:opacity-50 data-focus-visible:ring-2 data-focus-visible:ring-focus'
 
 // The hit area grows past the 16px icon: a pseudo-element on desktop, a 44px target on touch
 const removeClass =
-  'relative flex size-[calc(var(--ui-icon)+0.25rem)] shrink-0 items-center justify-center rounded-full text-muted outline-none transition-colors ' +
+  'relative flex size-[calc(var(--ui-icon)+0.25rem)] shrink-0 items-center justify-center rounded-full text-muted outline-none motion-safe:transition-colors ' +
   "after:absolute after:-inset-1.5 after:content-[''] touch:after:-inset-3 " +
   'data-hovered:bg-button-hover data-hovered:text-fg data-focus-visible:ring-2 data-focus-visible:ring-focus'
 

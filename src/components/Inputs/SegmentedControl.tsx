@@ -90,7 +90,7 @@ export function SegmentedControl<K extends Key = Key>({
           aria-label={iconOnly && typeof o.label === 'string' ? o.label : undefined}
           className={cx(
             // relative: above the sliding highlight. Same weight selected or not, so widths never jump.
-            'relative inline-flex cursor-default items-center justify-center gap-1.5 rounded-[calc(var(--ui-radius-sm)-2px)] text-ui leading-5 font-medium whitespace-nowrap text-muted outline-none transition-colors',
+            'relative inline-flex cursor-default items-center justify-center gap-1.5 rounded-[calc(var(--ui-radius-sm)-2px)] text-ui leading-5 font-medium whitespace-nowrap text-muted outline-none motion-safe:transition-colors',
             'data-hovered:text-fg data-focus-visible:ring-2 data-focus-visible:ring-focus data-disabled:opacity-50 data-selected:text-fg',
             '[&_svg]:size-icon [&_svg]:shrink-0',
             // Segment = control height minus the track's 2px padding on each side

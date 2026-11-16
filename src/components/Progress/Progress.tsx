@@ -49,7 +49,7 @@ export function ProgressBar({ label, showValue, tone = 'default', className, ...
           <div className={track}>
             {isIndeterminate ? (
               // Sliding segment; holds still at the start when reduced motion is on
-              <div className={cx('h-full w-2/5 rounded-full motion-safe:animate-indeterminate', fills[tone])} />
+              <div className={cx('h-full w-2/5 rounded-full motion-safe:animate-indeterminate motion-reduce:w-full motion-reduce:animate-pulse', fills[tone])} />
             ) : (
               <div
                 className={cx('h-full rounded-full motion-safe:transition-[width] motion-safe:duration-300', fills[tone])}

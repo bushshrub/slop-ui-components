@@ -17,7 +17,7 @@ const artifacts = [
 
 // The one accent-colored control: the kit's buttons are ink, so this is drawn here
 const sendClass =
-  'flex size-control shrink-0 items-center justify-center rounded-md bg-accent text-accent-fg outline-none transition-colors touch:size-control-touch ' +
+  'flex size-control shrink-0 items-center justify-center rounded-md bg-accent text-accent-fg outline-none motion-safe:transition-colors touch:size-control-touch ' +
   'data-hovered:opacity-90 data-pressed:opacity-80 ' +
   'data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus [&_svg]:size-icon'
 

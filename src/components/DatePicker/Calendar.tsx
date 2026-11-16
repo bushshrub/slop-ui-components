@@ -34,7 +34,7 @@ const dayCell = cx(
 
 // The visible day square, sized from the control tokens (--ui-control, or --ui-control-touch on touch screens)
 const daySquare = cx(
-  'relative mx-auto flex size-control touch:size-control-touch items-center justify-center rounded-sm tabular-nums transition-colors',
+  'relative mx-auto flex size-control touch:size-control-touch items-center justify-center rounded-sm tabular-nums motion-safe:transition-colors',
   'group-data-hovered:bg-hover group-data-focus-visible:ring-2 group-data-focus-visible:ring-focus',
   'group-data-unavailable:text-subtle group-data-unavailable:line-through',
 )

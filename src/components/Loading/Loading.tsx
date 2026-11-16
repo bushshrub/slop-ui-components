@@ -23,7 +23,7 @@ export function Spinner({ size = 'md', id, className }: SpinnerProps) {
       id={id}
       role="status"
       aria-label={strings.loading}
-      className={cx('shrink-0 motion-safe:animate-spin', spinnerSizes[size], className)}
+      className={cx('shrink-0 motion-safe:animate-spin motion-reduce:animate-pulse', spinnerSizes[size], className)}
     />
   )
 }

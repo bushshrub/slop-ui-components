@@ -29,7 +29,7 @@ export function CheckIndicator({ isSelected, isIndeterminate, className }: Check
     <span
       aria-hidden
       className={cx(
-        'flex size-check shrink-0 items-center justify-center rounded-[4px] border text-interactive-fg transition-colors',
+        'flex size-check shrink-0 items-center justify-center rounded-[4px] border text-interactive-fg motion-safe:transition-colors',
         'group-data-focus-visible:ring-2 group-data-focus-visible:ring-focus group-data-focus-visible:ring-offset-1 group-data-focus-visible:ring-offset-bg',
         isSelected || isIndeterminate
           ? 'border-interactive bg-interactive'

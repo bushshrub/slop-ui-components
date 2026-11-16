@@ -1,5 +1,5 @@
 export { cx } from './lib/cx'
-export { PHONE_QUERY, useMediaQuery } from './lib/useMediaQuery'
+export { PHONE_QUERY, REDUCED_MOTION_QUERY, useMediaQuery } from './lib/useMediaQuery'
 export * from './components/Button/Button'
 export * from './components/Heading/Heading'
 export * from './components/Inputs/TextField'

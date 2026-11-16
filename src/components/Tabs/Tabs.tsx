@@ -2,6 +2,7 @@ import { Children, cloneElement, isValidElement, useEffect, useRef, type ReactEl
 import {
   Tab as AriaTab,
   TabList as AriaTabList,
+  SelectionIndicator,
   TabPanel as AriaTabPanel,
   Tabs as AriaTabs,
   type TabListProps as AriaTabListProps,
@@ -84,6 +85,18 @@ const sectionTitled =
   'in-data-[orientation=vertical]:mt-6 in-data-[orientation=vertical]:not-first:mt-11 in-data-[orientation=vertical]:not-first:before:-top-9 ' +
   "in-data-[orientation=vertical]:after:absolute in-data-[orientation=vertical]:after:inset-x-2 in-data-[orientation=vertical]:after:bottom-full in-data-[orientation=vertical]:after:truncate in-data-[orientation=vertical]:after:pb-1 in-data-[orientation=vertical]:after:text-ui-sm in-data-[orientation=vertical]:after:leading-4 in-data-[orientation=vertical]:after:text-subtle in-data-[orientation=vertical]:after:content-[attr(data-section-title)_/_'']"
 
+// Marks the selected tab and slides to the next one when the selection changes (react-aria moves it between tabs).
+// Sizes are explicit, not insets, so the width can animate between tabs of different widths. Under reduced motion
+// there is no transition and it just moves. Forced colours drop backgrounds, so there it is drawn in Highlight.
+const indicator = cx(
+  'pointer-events-none absolute motion-safe:transition-[translate,width,height] motion-safe:duration-200 motion-safe:ease-out',
+  'in-data-[orientation=horizontal]:bottom-0 in-data-[orientation=horizontal]:left-2 in-data-[orientation=horizontal]:h-0.5 in-data-[orientation=horizontal]:w-[calc(100%-1rem)] in-data-[orientation=horizontal]:rounded-full in-data-[orientation=horizontal]:bg-fg',
+  'in-data-[orientation=vertical]:top-0 in-data-[orientation=vertical]:left-0 in-data-[orientation=vertical]:size-full in-data-[orientation=vertical]:rounded-sm in-data-[orientation=vertical]:bg-selected',
+  // A Highlight fill behind the vertical label would fight its forced text colour, so that one becomes a frame
+  'forced-colors:bg-[Highlight] forced-colors:forced-color-adjust-none',
+  'in-data-[orientation=vertical]:forced-colors:border-2 in-data-[orientation=vertical]:forced-colors:border-[Highlight] in-data-[orientation=vertical]:forced-colors:bg-transparent',
+)
+
 /** One tab. Its `id` matches the `id` of its TabPanel. */
 export function Tab({ icon, className, children, sectionStart, sectionTitle, ...props }: TabProps) {
   return (
@@ -93,20 +106,21 @@ export function Tab({ icon, className, children, sectionStart, sectionTitle, ...
       className={cx(
         'relative flex shrink-0 cursor-default items-center gap-2.5 text-ui leading-5 whitespace-nowrap outline-none',
         'data-disabled:opacity-50 data-focus-visible:ring-2 data-focus-visible:ring-focus data-focus-visible:ring-inset',
-        // Horizontal: muted text, underline under the selected one
+        // Horizontal: muted text, the indicator underlines the selected one
         'in-data-[orientation=horizontal]:h-control-lg in-data-[orientation=horizontal]:px-2 in-data-[orientation=horizontal]:text-muted in-data-[orientation=horizontal]:touch:h-control-touch',
         'in-data-[orientation=horizontal]:data-hovered:text-fg in-data-[orientation=horizontal]:data-selected:text-fg',
-        'in-data-[orientation=horizontal]:data-selected:after:absolute in-data-[orientation=horizontal]:data-selected:after:inset-x-2 in-data-[orientation=horizontal]:data-selected:after:bottom-0 in-data-[orientation=horizontal]:data-selected:after:h-0.5 in-data-[orientation=horizontal]:data-selected:after:rounded-full in-data-[orientation=horizontal]:data-selected:after:bg-fg',
-        // Vertical: nav rows like the sidebar, selected one filled
+        // Vertical: nav rows like the sidebar, the indicator fills the selected one
         'in-data-[orientation=vertical]:min-h-row in-data-[orientation=vertical]:rounded-sm in-data-[orientation=vertical]:px-2 in-data-[orientation=vertical]:touch:min-h-control-touch',
-        'in-data-[orientation=vertical]:data-hovered:bg-hover in-data-[orientation=vertical]:data-selected:bg-selected',
+        'in-data-[orientation=vertical]:data-hovered:bg-hover',
         sectionStart && sectionLine,
         sectionStart && sectionTitle && sectionTitled,
         className,
       )}
     >
-      {icon && <span className="flex size-icon shrink-0 items-center [&_svg]:size-icon">{icon}</span>}
-      <span className="truncate">{children}</span>
+      <SelectionIndicator className={indicator} />
+      {/* relative: above the vertical fill */}
+      {icon && <span className="relative flex size-icon shrink-0 items-center [&_svg]:size-icon">{icon}</span>}
+      <span className="relative truncate">{children}</span>
     </AriaTab>
   )
 }

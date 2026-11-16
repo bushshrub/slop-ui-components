@@ -43,7 +43,7 @@ export function RadioCards({ label, description, errorMessage, options, columns 
             value={o.id}
             isDisabled={o.isDisabled}
             className={cx(
-              'group relative flex cursor-default flex-col gap-1 rounded-md border border-border bg-surface p-3 text-ui text-fg outline-none transition-colors',
+              'group relative flex cursor-default flex-col gap-1 rounded-md border border-border bg-surface p-3 text-ui text-fg outline-none motion-safe:transition-colors',
               'data-hovered:border-border-strong data-focus-visible:ring-2 data-focus-visible:ring-focus',
               'data-selected:border-interactive data-selected:ring-1 data-selected:ring-interactive data-selected:data-focus-visible:ring-2 data-selected:data-focus-visible:ring-focus',
               'data-disabled:cursor-not-allowed data-disabled:opacity-50',

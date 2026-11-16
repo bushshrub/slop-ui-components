@@ -15,7 +15,7 @@ export interface CardProps extends AriaAttributes {
 
 const base = 'block w-full rounded-lg border border-border bg-surface p-4 text-left text-fg'
 const interactive =
-  'cursor-default outline-none transition-colors data-hovered:bg-hover data-pressed:bg-selected data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus'
+  'cursor-default outline-none motion-safe:transition-colors data-hovered:bg-hover data-pressed:bg-selected data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus'
 
 /** Bordered surface that groups related content. Becomes a link or button when given `href` or `onPress`. */
 export function Card({ href, onPress, className, children, ...props }: CardProps) {

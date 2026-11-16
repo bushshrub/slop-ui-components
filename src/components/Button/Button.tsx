@@ -18,7 +18,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 const base =
   'inline-flex shrink-0 cursor-default items-center justify-center whitespace-nowrap rounded-button font-sans text-ui leading-5 [font-weight:var(--ui-button-weight)] ' +
   // Focus: ring with a gap, so it reads on filled buttons too. The gap is transparent, so it works on any surface.
-  'select-none outline-none transition-colors data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus ' +
+  'select-none outline-none motion-safe:transition-colors data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus ' +
   'data-disabled:cursor-not-allowed data-disabled:opacity-50 [&_svg]:size-icon [&_svg]:shrink-0'
 
 const variants: Record<ButtonVariant, string> = {

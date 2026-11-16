@@ -28,7 +28,7 @@ export function Disclosure({ title, children, headingLevel = 3, className, ...pr
       <AriaHeading level={headingLevel} className="m-0">
         <AriaButton
           slot="trigger"
-          className="flex min-h-row w-full cursor-default items-center justify-between gap-2 rounded-sm px-3 py-2 text-left text-ui font-medium text-fg outline-none transition-colors data-disabled:opacity-50 data-focus-visible:outline-2 data-focus-visible:-outline-offset-2 data-focus-visible:outline-solid data-focus-visible:outline-focus data-hovered:bg-hover touch:min-h-control-touch"
+          className="flex min-h-row w-full cursor-default items-center justify-between gap-2 rounded-sm px-3 py-2 text-left text-ui font-medium text-fg outline-none motion-safe:transition-colors data-disabled:opacity-50 data-focus-visible:outline-2 data-focus-visible:-outline-offset-2 data-focus-visible:outline-solid data-focus-visible:outline-focus data-hovered:bg-hover touch:min-h-control-touch"
         >
           {title}
           <ChevronDown

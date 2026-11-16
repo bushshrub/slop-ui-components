@@ -156,7 +156,7 @@ export function FileDropZone({
         receive(files)
       }}
       className={cx(
-        'flex flex-col items-center gap-3 rounded-lg border border-dashed border-border-strong bg-field px-6 py-8 text-center outline-none transition-colors',
+        'flex flex-col items-center gap-3 rounded-lg border border-dashed border-border-strong bg-field px-6 py-8 text-center outline-none motion-safe:transition-colors',
         'data-drop-target:border-focus data-drop-target:bg-info-soft data-focus-visible:outline-2 data-focus-visible:outline-offset-2 data-focus-visible:outline-focus',
         // Dim by dropping the border and icon fill, not opacity, so the text keeps its contrast
         'data-disabled:cursor-not-allowed data-disabled:border-border data-disabled:bg-transparent',

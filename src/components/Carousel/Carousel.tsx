@@ -13,7 +13,7 @@ import {
 import { Button as AriaButton, useLocale } from 'react-aria-components'
 import { cx } from '../../lib/cx'
 import { useStrings } from '../../lib/strings'
-import { PHONE_QUERY, useMediaQuery } from '../../lib/useMediaQuery'
+import { PHONE_QUERY, REDUCED_MOTION_QUERY, useMediaQuery } from '../../lib/useMediaQuery'
 import { IconButton } from '../Button/Button'
 
 // Gap sizes in Tailwind spacing steps, so they follow the theme's --spacing unit
@@ -41,7 +41,7 @@ function scrollSlide(el: HTMLElement | null, i: number, stops: number, pending: 
   const slide = el?.children[i] as HTMLElement | undefined
   if (!el || !slide) return
   pending.current = nearestSlide(el, stops) === i ? null : i
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const reduceMotion = window.matchMedia(REDUCED_MOTION_QUERY).matches
   // Not scrollIntoView: that can also scroll the page
   el.scrollTo({ left: slide.offsetLeft - el.offsetLeft, behavior: reduceMotion ? 'auto' : 'smooth' })
 }
@@ -218,7 +218,7 @@ export function Carousel({
                   className="relative flex size-icon cursor-default items-center justify-center rounded-full outline-none data-focus-visible:ring-2 data-focus-visible:ring-focus touch:size-control-touch"
                 >
                   <span
-                    className={cx('size-1.5 rounded-full transition-colors', i === active ? 'bg-fg' : 'bg-border-strong')}
+                    className={cx('size-1.5 rounded-full motion-safe:transition-colors', i === active ? 'bg-fg' : 'bg-border-strong')}
                   />
                 </AriaButton>
               ))}

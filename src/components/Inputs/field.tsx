@@ -7,7 +7,7 @@ export const fieldBox =
   // Filled, borderless at rest; the focus color draws the edge while typing. Retheme with
   // --ui-field, --ui-field-hover, --ui-field-border and --ui-focus.
   // 16px text on touch stops iOS from zooming into the field on focus
-  'rounded-sm border border-field-border bg-field text-ui text-fg outline-none transition-colors touch:text-base ' +
+  'rounded-sm border border-field-border bg-field text-ui text-fg outline-none motion-safe:transition-colors touch:text-base ' +
   'data-hovered:bg-field-hover data-focused:border-focus data-focus-within:border-focus ' +
   'data-focus-visible:ring-2 data-focus-visible:ring-focus/30 ' +
   'data-invalid:border-danger data-disabled:cursor-not-allowed data-disabled:opacity-50'

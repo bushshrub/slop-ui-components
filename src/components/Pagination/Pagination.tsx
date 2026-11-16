@@ -44,7 +44,7 @@ export interface PaginationProps {
 }
 
 const pageButton =
-  'inline-flex h-control-sm min-w-control-sm cursor-default select-none items-center justify-center rounded-button px-2 text-ui leading-5 tabular-nums outline-none transition-colors touch:h-control touch:min-w-control ' +
+  'inline-flex h-control-sm min-w-control-sm cursor-default select-none items-center justify-center rounded-button px-2 text-ui leading-5 tabular-nums outline-none motion-safe:transition-colors touch:h-control touch:min-w-control ' +
   'data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus'
 
 /** Page switcher with previous/next and numbered pages. On phones it collapses to "Page 3 of 16". */

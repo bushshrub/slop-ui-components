@@ -29,7 +29,7 @@ export interface BreadcrumbsProps extends Omit<AriaBreadcrumbsProps<BreadcrumbIt
 const separator = <ChevronRight aria-hidden className="size-icon shrink-0 text-subtle rtl:rotate-180" />
 
 const linkClass =
-  'rounded-sm text-ui leading-5 outline-none transition-colors data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus'
+  'rounded-sm text-ui leading-5 outline-none motion-safe:transition-colors data-focus-visible:outline-2 data-focus-visible:outline-solid data-focus-visible:outline-offset-2 data-focus-visible:outline-focus'
 
 /** Where you are in a hierarchy. The last item is the current page; earlier ones are links. */
 export function Breadcrumbs({ items, maxItems = 4, className, ...props }: BreadcrumbsProps) {
