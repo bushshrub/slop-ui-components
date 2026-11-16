@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, type ReactNode } from 'react'
+import { useContext, useEffect, useRef, type ContextType, type ReactNode, type RefObject } from 'react'
 import {
   ComboBox as AriaComboBox,
   ComboBoxStateContext,
@@ -57,9 +57,19 @@ export function ComboBox({
   // Match anywhere in the label, not only at the start (react-aria's default)
   const { contains } = useFilter({ sensitivity: 'base' })
   const strings = useStrings()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const stateRef = useRef<ContextType<typeof ComboBoxStateContext>>(null)
   return (
     <AriaComboBox
       {...props}
+      onOpenChange={(isOpen, trigger) => {
+        props.onOpenChange?.(isOpen, trigger)
+        // react-aria closes the list on any scroll of the page around the field. On a phone the on-screen keyboard
+        // scrolls the page as it rises, so the list closed the moment it opened: one a scroll closed opens again
+        // while the field keeps focus.
+        if (!isOpen && window.event?.type === 'scroll' && document.activeElement === inputRef.current)
+          requestAnimationFrame(() => stateRef.current?.open(null, 'input'))
+      }}
       // Always on for react-aria, which otherwise throws away typed text that is not an option when the
       // field loses focus. When the caller wants options only, that text is flagged below instead.
       allowsCustomValue
@@ -79,6 +89,8 @@ export function ComboBox({
       <Group className={cx(fieldBox, 'flex h-control items-center gap-2 px-3 touch:h-control-touch', prefix && 'pl-2.5')}>
         {prefix && <span className="pointer-events-none flex shrink-0 text-subtle [&_svg]:size-icon">{prefix}</span>}
         <ComboInput
+          inputRef={inputRef}
+          stateRef={stateRef}
           options={options}
           // With `filter` off the caller narrows the list, so only an exact label counts as a match
           match={allowsCustomValue ? undefined : filter ? (props.defaultFilter ?? contains) : sameText}
@@ -116,16 +128,19 @@ const sameText = (a: string, b: string) => a.toLocaleLowerCase() === b.toLocaleL
  * counts. No `match` means free text is allowed and nothing is done.
  */
 function ComboInput({
+  inputRef,
+  stateRef,
   options,
   match,
   placeholder: hint,
 }: {
+  inputRef: RefObject<HTMLInputElement | null>
+  stateRef: RefObject<ContextType<typeof ComboBoxStateContext>>
   options: SelectOption[]
   match?: (label: string, typed: string) => boolean
   placeholder?: string
 }) {
   const state = useContext(ComboBoxStateContext)
-  const stateRef = useRef(state)
   useEffect(() => {
     stateRef.current = state
   })
@@ -133,9 +148,10 @@ function ComboInput({
   const selectedKey = state?.selectedKey
   useEffect(() => {
     if (selectedKey != null) stateRef.current?.commitValidation()
-  }, [selectedKey])
+  }, [selectedKey, stateRef])
   return (
     <Input
+      ref={inputRef}
       placeholder={hint}
       onBlur={() => {
         const typed = state?.inputValue.trim()
