@@ -15,7 +15,7 @@ export interface SpinnerProps {
   className?: string
 }
 
-/** Spinning indicator in the current text color. Stops spinning for people who prefer reduced motion. */
+/** Spinning indicator in the current text color. Pulses in place instead for people who prefer reduced motion. */
 export function Spinner({ size = 'md', id, className }: SpinnerProps) {
   const strings = useStrings()
   return (

@@ -118,3 +118,46 @@ export const HorizontalTest: Story = {
     await expect(canvas.getByRole('tab', { name: 'Instructions' })).toHaveAttribute('aria-selected', 'true')
   },
 }
+
+const indicatorIn = (tab: HTMLElement) => tab.querySelector<HTMLElement>(':scope > div')
+
+/** The indicator follows the selection. Tests run with reduced motion, so it moves without a transition. */
+export const IndicatorTest: Story = {
+  ...Horizontal,
+  name: 'Selection indicator (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas, userEvent }) => {
+    const [first, second] = canvas.getAllByRole('tab')
+    const indicator = indicatorIn(first)
+    await expect(indicator).not.toBeNull()
+    await expect(indicatorIn(second)).toBeNull()
+    // An underline across the tab, less the padding
+    await expect(indicator!.getBoundingClientRect().height).toBeLessThan(4)
+    await expect(getComputedStyle(indicator!).transitionDuration).toBe('0s')
+
+    await userEvent.click(second)
+    await waitFor(() => expect(indicatorIn(second)).not.toBeNull())
+    await expect(indicatorIn(first)).toBeNull()
+    const box = indicatorIn(second)!.getBoundingClientRect()
+    const tab = second.getBoundingClientRect()
+    await expect(box.left).toBeGreaterThan(tab.left)
+    await expect(box.right).toBeLessThan(tab.right)
+  },
+}
+
+export const VerticalIndicatorTest: Story = {
+  ...Vertical,
+  name: 'Vertical selection indicator (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas, userEvent }) => {
+    const appearance = canvas.getByRole('tab', { name: 'Appearance' })
+    await userEvent.click(appearance)
+    await waitFor(() => expect(indicatorIn(appearance)).not.toBeNull())
+    // Fills the row, behind the icon and label
+    const box = indicatorIn(appearance)!.getBoundingClientRect()
+    const row = appearance.getBoundingClientRect()
+    await expect(Math.round(box.height)).toBe(Math.round(row.height))
+    await expect(Math.round(box.width)).toBe(Math.round(row.width))
+    await expect(canvas.getAllByRole('tab').filter((t) => indicatorIn(t)).length).toBe(1)
+  },
+}
