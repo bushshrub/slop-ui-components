@@ -85,11 +85,10 @@ const sectionTitled =
   'in-data-[orientation=vertical]:mt-6 in-data-[orientation=vertical]:not-first:mt-11 in-data-[orientation=vertical]:not-first:before:-top-9 ' +
   "in-data-[orientation=vertical]:after:absolute in-data-[orientation=vertical]:after:inset-x-2 in-data-[orientation=vertical]:after:bottom-full in-data-[orientation=vertical]:after:truncate in-data-[orientation=vertical]:after:pb-1 in-data-[orientation=vertical]:after:text-ui-sm in-data-[orientation=vertical]:after:leading-4 in-data-[orientation=vertical]:after:text-subtle in-data-[orientation=vertical]:after:content-[attr(data-section-title)_/_'']"
 
-// Marks the selected tab and slides to the next one when the selection changes (react-aria moves it between tabs).
-// Sizes are explicit, not insets, so the width can animate between tabs of different widths. Under reduced motion
-// there is no transition and it just moves. Forced colours drop backgrounds, so there it is drawn in Highlight.
+// Marks the selected tab. It moves to the new tab at once: a sliding fill stretching between rows read as sluggish.
+// Forced colours drop backgrounds, so there it is drawn in Highlight.
 const indicator = cx(
-  'pointer-events-none absolute motion-safe:transition-[translate,width,height] motion-safe:duration-200 motion-safe:ease-out',
+  'pointer-events-none absolute',
   'in-data-[orientation=horizontal]:bottom-0 in-data-[orientation=horizontal]:left-2 in-data-[orientation=horizontal]:h-0.5 in-data-[orientation=horizontal]:w-[calc(100%-1rem)] in-data-[orientation=horizontal]:rounded-full in-data-[orientation=horizontal]:bg-fg',
   'in-data-[orientation=vertical]:top-0 in-data-[orientation=vertical]:left-0 in-data-[orientation=vertical]:size-full in-data-[orientation=vertical]:rounded-sm in-data-[orientation=vertical]:bg-selected',
   // A Highlight fill behind the vertical label would fight its forced text colour, so that one becomes a frame
