@@ -3,6 +3,8 @@ import {
   Cell as AriaCell,
   Column as AriaColumn,
   ColumnResizer,
+  GridList as AriaGridList,
+  GridListItem as AriaGridListItem,
   ResizableTableContainer,
   Row as AriaRow,
   Table as AriaTable,
@@ -14,13 +16,18 @@ import {
   type CellProps as AriaCellProps,
   type ColumnProps as AriaColumnProps,
   type RowProps,
+  type Selection,
   type TableBodyProps as AriaTableBodyProps,
   type TableHeaderProps,
   type TableProps as AriaTableProps,
 } from 'react-aria-components'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Columns3 } from 'lucide-react'
 import { cx } from '../../lib/cx'
 import { PHONE_QUERY, useMediaQuery } from '../../lib/useMediaQuery'
+import { useStrings } from '../../lib/strings'
+import { Button, type ButtonSize } from '../Button/Button'
+import { DescriptionItem, DescriptionList } from '../DescriptionList/DescriptionList'
+import { Menu, MenuItem, MenuTrigger } from '../Menu/Menu'
 
 type ColumnSize = NonNullable<AriaColumnProps['defaultWidth']>
 type ColumnStaticSize = NonNullable<AriaColumnProps['minWidth']>
@@ -213,6 +220,8 @@ export interface DataTableColumn<T> {
   cellClassName?: string
   /** Leave the column out below 768px. For `overflow="fit"` tables, so a phone shows the few columns that matter. */
   hideOnPhone?: boolean
+  /** Whether the column menu (`ColumnVisibilityMenu`) can hide it. Set `false` to pin a column such as the name. Default true. */
+  canHide?: boolean
   /** Starting width with `resizableColumns`: px, %, or `fr`. Default `1fr`. */
   defaultWidth?: ColumnSize
   /** Narrowest the user can drag the column, in px or %. */
@@ -244,12 +253,35 @@ export interface DataTableProps<T> extends Omit<TableProps, 'children'> {
   headingHeight?: number
   /** Height of the scrolling table when `virtualized`, any CSS length. Default `24rem`. */
   height?: string
+  /**
+   * Below 768px, what the table becomes. `table` (default) keeps the table. `cards` shows each row as a card: the
+   * first shown column is the title and the other shown columns are label and value. Cards are a `GridList`, so
+   * they keep `onRowPress`, `selectionMode` and arrow-key navigation. Not on cards: `rowHref` (a table with
+   * `rowHref` stays a table on phones), sort buttons on the headings, `overflow`, `resizableColumns` and
+   * `virtualized`.
+   */
+  phoneLayout?: 'table' | 'cards'
+  /** Ids of the columns the user has hidden. Keep it in step with the `ColumnVisibilityMenu` next to the table. */
+  hiddenColumns?: Iterable<Key>
+  /** Columns hidden at first, when `hiddenColumns` is not given. */
+  defaultHiddenColumns?: Iterable<Key>
+  /**
+   * Accepted for the controlled pattern, but the table never changes its own columns: the `ColumnVisibilityMenu`
+   * calls its own `onHiddenColumnsChange`. Not called by the table.
+   */
+  onHiddenColumnsChange?: (keys: Set<Key>) => void
+}
+
+/** A column is hidden when it is in the set and the column allows hiding. */
+function isColumnHidden<T>(column: DataTableColumn<T>, hidden: ReadonlySet<Key>) {
+  return column.canHide !== false && hidden.has(column.id)
 }
 
 /**
  * Table from an array of column definitions and an array of rows: the short form for plain data lists.
  * Takes every `Table` prop (`aria-label`, `sortDescriptor`, `selectionMode` ...). Compose `Table` by hand
- * when rows differ from each other or cells need their own props.
+ * when rows differ from each other or cells need their own props. Pair with `ColumnVisibilityMenu` to let
+ * the user hide columns.
  */
 export function DataTable<T>({
   columns,
@@ -266,10 +298,31 @@ export function DataTable<T>({
   resizableColumns,
   onColumnResizeEnd,
   className,
+  phoneLayout = 'table',
+  hiddenColumns,
+  defaultHiddenColumns,
+  onHiddenColumnsChange: _onHiddenColumnsChange,
   ...props
 }: DataTableProps<T>) {
   const phone = useMediaQuery(PHONE_QUERY)
-  const shown = phone ? columns.filter((c) => !c.hideOnPhone) : columns
+  const hidden = new Set(hiddenColumns ?? defaultHiddenColumns)
+  const shown = columns.filter((c) => !isColumnHidden(c, hidden) && !(phone && c.hideOnPhone))
+  if (phone && phoneLayout === 'cards' && !rowHref && shown.length > 0)
+    return (
+      <DataTableCards
+        aria-label={props['aria-label']}
+        columns={shown}
+        rows={rows}
+        rowKey={rowKey}
+        onRowPress={onRowPress}
+        emptyState={emptyState}
+        selectionMode={props.selectionMode}
+        selectedKeys={props.selectedKeys}
+        defaultSelectedKeys={props.defaultSelectedKeys}
+        onSelectionChange={props.onSelectionChange}
+        disabledKeys={props.disabledKeys}
+      />
+    )
   const rowHeader = shown.find((c) => c.isRowHeader)?.id ?? shown[0]?.id
   const table = (
     <AriaTable
@@ -317,5 +370,103 @@ export function DataTable<T>({
         table
       )}
     </TableFrame>
+  )
+}
+
+type DataTableCardsProps<T> = Pick<
+  DataTableProps<T>,
+  'aria-label' | 'rows' | 'rowKey' | 'onRowPress' | 'emptyState' | 'selectionMode' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'disabledKeys'
+> & {
+  /** The columns shown on the phone. The first one is the card title. */
+  columns: readonly DataTableColumn<T>[]
+}
+
+/** `phoneLayout="cards"`: a GridList with one card per row. Assumes at least one column. */
+function DataTableCards<T>({ columns, rows, rowKey, onRowPress, emptyState, ...props }: DataTableCardsProps<T>) {
+  const [title, ...fields] = columns
+  return (
+    <AriaGridList
+      aria-label={props['aria-label']}
+      selectionMode={props.selectionMode}
+      selectedKeys={props.selectedKeys}
+      defaultSelectedKeys={props.defaultSelectedKeys}
+      onSelectionChange={props.onSelectionChange}
+      disabledKeys={props.disabledKeys}
+      renderEmptyState={emptyState ? () => emptyState : undefined}
+      className="gap-3"
+    >
+      {rows.map((row) => {
+        const titleText = title.cell(row)
+        return (
+          <AriaGridListItem
+            key={rowKey(row)}
+            id={rowKey(row)}
+            textValue={typeof titleText === 'string' ? titleText : undefined}
+            onAction={onRowPress && (() => onRowPress(row))}
+            className="flex-col items-stretch gap-2 border-border bg-surface p-3"
+          >
+            <div className="min-w-0 font-medium">{titleText}</div>
+            {fields.length > 0 && (
+              <DescriptionList layout="stacked">
+                {fields.map((c) => (
+                  <DescriptionItem key={c.id} label={c.header} mono={c.mono} numeric={c.numeric}>
+                    {c.cell(row)}
+                  </DescriptionItem>
+                ))}
+              </DescriptionList>
+            )}
+          </AriaGridListItem>
+        )
+      })}
+    </AriaGridList>
+  )
+}
+
+export interface ColumnVisibilityMenuProps<T> {
+  /** The columns of the DataTable this menu controls. */
+  columns: readonly DataTableColumn<T>[]
+  /** Ids of the hidden columns: the same set as the DataTable's `hiddenColumns`. */
+  hiddenColumns: Iterable<Key>
+  /** Called with the new set of hidden column ids. Keep it in step with the DataTable. */
+  onHiddenColumnsChange: (keys: Set<Key>) => void
+  size?: ButtonSize
+}
+
+/**
+ * A Columns button that opens a checklist of the table's columns. Unchecking a column hides it in the DataTable
+ * with the same `hiddenColumns`. At least one column stays visible, and columns with `canHide={false}` stay
+ * checked. Put it above the table, with the state in your component.
+ */
+export function ColumnVisibilityMenu<T>({ columns, hiddenColumns, onHiddenColumnsChange, size }: ColumnVisibilityMenuProps<T>) {
+  const strings = useStrings()
+  const hidden = new Set(hiddenColumns)
+  const visibleIds = columns.filter((c) => !isColumnHidden(c, hidden)).map((c) => c.id)
+  // The last visible column, and the pinned ones, cannot be unchecked
+  const disabledKeys = columns.filter((c) => c.canHide === false || (visibleIds.length === 1 && visibleIds[0] === c.id)).map((c) => c.id)
+  function handleSelectionChange(keys: Selection) {
+    const checked = keys === 'all' ? new Set(columns.map((c) => c.id)) : keys
+    const next = new Set(columns.filter((c) => c.canHide !== false && !checked.has(c.id)).map((c) => c.id))
+    if (next.size < columns.length) onHiddenColumnsChange(next)
+  }
+  return (
+    <MenuTrigger>
+      <Button variant="secondary" size={size}>
+        <Columns3 />
+        {strings.columns}
+      </Button>
+      <Menu
+        aria-label={strings.columns}
+        selectionMode="multiple"
+        selectedKeys={visibleIds}
+        disabledKeys={disabledKeys}
+        onSelectionChange={handleSelectionChange}
+      >
+        {columns.map((c) => (
+          <MenuItem key={c.id} id={c.id} textValue={typeof c.header === 'string' ? c.header : c.id}>
+            {c.header}
+          </MenuItem>
+        ))}
+      </Menu>
+    </MenuTrigger>
   )
 }
