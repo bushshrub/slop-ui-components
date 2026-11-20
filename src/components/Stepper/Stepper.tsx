@@ -42,7 +42,7 @@ const indicatorTone: Record<StepStatus, string> = {
   complete: 'bg-interactive text-interactive-fg forced-colors:border forced-colors:border-[ButtonText]',
   current: 'bg-interactive text-interactive-fg forced-colors:border-3 forced-colors:border-[Highlight]',
   upcoming: 'border border-border-strong text-muted',
-  error: 'bg-danger text-danger-fg forced-colors:border forced-colors:border-[ButtonText]',
+  error: 'bg-danger-fill text-danger-fg forced-colors:border forced-colors:border-[ButtonText]',
 }
 
 const titleTone: Record<StepStatus, string> = {

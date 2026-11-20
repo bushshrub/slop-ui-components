@@ -42,6 +42,7 @@ const groups: Record<string, [token: string, use: string, fallback?: string][]> 
     ['knob', 'Switch knob'],
     ['focus', 'Focus ring and field border (defaults to interactive)'],
     ['danger', 'Destructive, errors'],
+    ['danger-fill', 'Solid destructive buttons and badges'],
     ['danger-fg', 'Text on danger fill'],
     ['success', 'Saved, healthy'],
     ['warning', 'Needs attention'],

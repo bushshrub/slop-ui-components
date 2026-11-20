@@ -43,6 +43,7 @@
   --color-knob: var(--ui-knob);
   --color-focus: var(--ui-focus);
   --color-danger: var(--ui-danger);
+  --color-danger-fill: var(--ui-danger-fill, var(--ui-danger));
   --color-danger-fg: var(--ui-danger-fg);
   --color-info: var(--ui-info);
   --color-link: var(--ui-link, var(--ui-interactive));

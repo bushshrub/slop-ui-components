@@ -21,7 +21,7 @@ const solid: Record<BadgeTone, string> = {
   info: 'bg-info text-accent-fg',
   success: 'bg-success text-accent-fg',
   warning: 'bg-warning text-accent-fg',
-  danger: 'bg-danger text-danger-fg',
+  danger: 'bg-danger-fill text-danger-fg',
 }
 
 // Outline keeps text-fg for the same reason as soft; the border and an optional dot carry the tone.

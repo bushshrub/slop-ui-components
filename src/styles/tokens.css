@@ -55,8 +55,8 @@
   --ui-interactive: #4060cf;  /* the blue: on/active states (switches, checks, progress) and focus */
   --ui-interactive-fg: #ffffff;
   --ui-focus: var(--ui-interactive);
-  --ui-danger: #b3261e;
-  --ui-danger-fg: #ffffff;
+  --ui-danger: #a63d2f;
+  --ui-danger-fg: #ffffff;  /* text on --ui-danger-fill */
   --ui-success: #3f7d4f;
   --ui-warning: #a8590c;
   --ui-info: var(--ui-interactive);
@@ -102,7 +102,9 @@
   --ui-interactive-fg: #1f1e1d;
   --ui-focus: var(--ui-interactive);
   --ui-danger: #f2887e;
-  --ui-danger-fg: #1f1e1d;
+  /* Solid danger fills (buttons, badges) take a deep brick: the light text red would glow as a block */
+  --ui-danger-fill: #b4473a;
+  --ui-danger-fg: #ffffff;
   --ui-success: #6fb37f;
   --ui-warning: #e3a05c;
   --ui-info: var(--ui-interactive);
@@ -144,7 +146,8 @@
     --ui-interactive-fg: #1f1e1d;
     --ui-focus: var(--ui-interactive);
     --ui-danger: #f2887e;
-    --ui-danger-fg: #1f1e1d;
+    --ui-danger-fill: #b4473a;
+    --ui-danger-fg: #ffffff;
     --ui-success: #6fb37f;
     --ui-warning: #e3a05c;
     --ui-info: var(--ui-interactive);
