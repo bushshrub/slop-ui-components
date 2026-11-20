@@ -342,7 +342,7 @@ export function SidebarUser({ name, detail, avatarUrl, collapsed: collapsedProp,
       {!collapsed && (
         <>
           <span className="min-w-0 truncate font-medium">{name}</span>
-          {detail && <span className="shrink-0 text-ui-sm text-muted">· {detail}</span>}
+          {detail && <span className="shrink-0 text-ui-sm text-muted">{detail}</span>}
           <ChevronDown aria-hidden className="size-3.5 shrink-0 text-muted" />
         </>
       )}

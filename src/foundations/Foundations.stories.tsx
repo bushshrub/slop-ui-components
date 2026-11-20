@@ -108,14 +108,14 @@ export const Colors: Story = {
 }
 
 const typeRows: [string, string, ReactNode][] = [
-  ['Page title', 'Source Serif 4 · 28px', <Heading variant="page">Conversations</Heading>],
-  ['Dialog title', 'Source Serif 4 · 18px', <Heading variant="dialog">Rename chat</Heading>],
-  ['Section', 'Inter 600 · 15px', <Heading variant="section">Members</Heading>],
-  ['Body', 'Inter 400 · 14px', <p className="m-0">The quick brown fox jumps over the lazy dog.</p>],
-  ['Secondary', 'Inter 400 · 12px', <p className="m-0 text-ui-sm text-muted">Updated 4 minutes ago</p>],
-  ['Label', 'Inter 500 · 12px caps', <Heading variant="label">Danger zone</Heading>],
-  ['Mono', 'JetBrains Mono · 13px', <code className="font-mono text-[0.8125rem]">cnv_7f3a · sk-live-…3f9c</code>],
-  ['Numbers', 'tabular-nums', <span className="tabular-nums">1,204 · 88 · 12,345,678 · 0.07</span>],
+  ['Page title', 'Source Serif 4, 28px', <Heading variant="page">Conversations</Heading>],
+  ['Dialog title', 'Source Serif 4, 18px', <Heading variant="dialog">Rename chat</Heading>],
+  ['Section', 'Inter 600, 15px', <Heading variant="section">Members</Heading>],
+  ['Body', 'Inter 400, 14px', <p className="m-0">The quick brown fox jumps over the lazy dog.</p>],
+  ['Secondary', 'Inter 400, 12px', <p className="m-0 text-ui-sm text-muted">Updated 4 minutes ago</p>],
+  ['Label', 'Inter 500, 12px caps', <Heading variant="label">Danger zone</Heading>],
+  ['Mono', 'JetBrains Mono, 13px', <span className="flex gap-4 font-mono text-[0.8125rem]"><code>cnv_7f3a</code><code>sk-live-…3f9c</code></span>],
+  ['Numbers', 'tabular-nums', <span className="inline-flex flex-col items-end tabular-nums"><span>1,204</span><span>88</span><span>12,345,678</span><span>0.07</span></span>],
 ]
 
 /** Type scale. Serif only for page and dialog titles. */

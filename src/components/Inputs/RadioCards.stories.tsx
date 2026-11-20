@@ -4,9 +4,9 @@ import { expect, fn } from 'storybook/test'
 import { RadioCards } from './RadioCards'
 
 const sizes = [
-  { id: 'small', title: 'Small', icon: <Cpu />, meta: '$4/mo', description: '1 vCPU · 1 GB RAM · 25 GB disk' },
-  { id: 'medium', title: 'Medium', icon: <Server />, meta: '$12/mo', description: '2 vCPU · 4 GB RAM · 80 GB disk' },
-  { id: 'large', title: 'Large', icon: <HardDrive />, meta: '$48/mo', description: '8 vCPU · 16 GB RAM · 320 GB disk' },
+  { id: 'small', title: 'Small', icon: <Cpu />, meta: '$4/mo', description: '1 vCPU, 1 GB RAM, 25 GB disk' },
+  { id: 'medium', title: 'Medium', icon: <Server />, meta: '$12/mo', description: '2 vCPU, 4 GB RAM, 80 GB disk' },
+  { id: 'large', title: 'Large', icon: <HardDrive />, meta: '$48/mo', description: '8 vCPU, 16 GB RAM, 320 GB disk' },
 ]
 
 const meta = {
@@ -68,9 +68,9 @@ export const SoldOutAndRequired: Story = {
     isRequired: true,
     errorMessage: 'Pick a region to continue.',
     options: [
-      { id: 'fra', title: 'Frankfurt', meta: '12 ms', description: 'eu-central · closest to you' },
+      { id: 'fra', title: 'Frankfurt', meta: '12 ms', description: 'eu-central, closest to you' },
       { id: 'ams', title: 'Amsterdam', meta: '18 ms', description: 'eu-west' },
-      { id: 'iad', title: 'Ashburn', meta: '94 ms', description: 'us-east · sold out until December', isDisabled: true },
+      { id: 'iad', title: 'Ashburn', meta: '94 ms', description: 'us-east, sold out until December', isDisabled: true },
       {
         id: 'sin',
         title: 'Singapore with an unreasonably long region name that has to truncate',

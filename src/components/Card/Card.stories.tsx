@@ -1,12 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn } from 'storybook/test'
+import { Clock, MessageSquare } from 'lucide-react'
 import { Switch } from '../Inputs/Switch'
+import { MetaItem, MetaRow } from '../MetaRow/MetaRow'
 import { Card, CardBody, CardFooter, CardHeader } from './Card'
 
 const projects = [
-  { name: 'Launch plan', note: 'Roadmap, copy drafts and the press checklist.', meta: '12 chats · Updated 2d ago' },
-  { name: 'Research notes', note: 'Interview summaries and open questions.', meta: '4 chats · Updated 5d ago' },
-  { name: 'Brand voice', note: 'Tone guidelines and example rewrites.', meta: '9 chats · Updated 1w ago' },
+  { name: 'Launch plan', note: 'Roadmap, copy drafts and the press checklist.', chats: 12, updated: '2d' },
+  { name: 'Research notes', note: 'Interview summaries and open questions.', chats: 4, updated: '5d' },
+  { name: 'Brand voice', note: 'Tone guidelines and example rewrites.', chats: 9, updated: '1w' },
 ]
 
 const meta = {
@@ -44,7 +46,12 @@ export const Gallery: Story = {
           <Card key={p.name} href="#">
             <CardHeader title={p.name} />
             <CardBody>{p.note}</CardBody>
-            <CardFooter>{p.meta}</CardFooter>
+            <CardFooter>
+              <MetaRow>
+                <MetaItem icon={<MessageSquare />}>{p.chats} chats</MetaItem>
+                <MetaItem icon={<Clock />}>Updated {p.updated} ago</MetaItem>
+              </MetaRow>
+            </CardFooter>
           </Card>
         ))}
       </div>
