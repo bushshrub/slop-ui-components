@@ -10,7 +10,9 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: '`Spinner` for short waits, `Skeleton` to hold the shape of content that is still loading.',
+        component:
+          '`Spinner` for short waits, `Skeleton` to hold the shape of content that is still loading. Skeletons shimmer; ' +
+          'pass `animation="pulse"` for a fade instead. Under reduced motion both fade in place.',
       },
     },
   },

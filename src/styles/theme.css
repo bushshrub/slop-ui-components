@@ -98,6 +98,7 @@
   --animate-slide-up: slide-up 200ms ease-out;
   --animate-drill-in: drill-in 160ms ease-out;
   --animate-indeterminate: indeterminate 1.4s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
 }
 
 @keyframes pop-in {
@@ -121,6 +122,23 @@
 }
 @keyframes drill-in {
   from { opacity: 0; transform: translateX(1.5rem); }
+}
+/* The band sits mid-image on a 300%-wide background: at 100% it is off the left edge, at 0% off the right */
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+
+/* Skeleton fill with a soft band sweeping across. The band mixes in a little text colour, so it reads in either theme. */
+@utility skeleton-shimmer {
+  background-color: var(--ui-track);
+  background-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    color-mix(in srgb, var(--ui-track), var(--ui-fg) 8%) 50%,
+    transparent 60%
+  );
+  background-size: 300% 100%;
 }
 
 @layer base {

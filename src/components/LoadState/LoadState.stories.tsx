@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Server } from 'lucide-react'
 import { expect, fn } from 'storybook/test'
 import { Button } from '../Button/Button'
+import { Skeleton } from '../Loading/Loading'
 import { LoadState } from './LoadState'
 
 const meta = {
@@ -43,6 +44,22 @@ export const Empty: Story = { args: { status: 'empty' } }
 export const Error: Story = { args: { status: 'error' } }
 export const Ready: Story = { args: { status: 'ready' } }
 
+/** `skeleton`: shimmering placeholders instead of the spinner, for content whose shape you know. */
+export const LoadingSkeleton: Story = {
+  args: {
+    skeleton: (
+      <div className="flex flex-col gap-4 p-4">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex items-center gap-3">
+            <Skeleton circle className="size-8" />
+            <Skeleton lines={2} className="flex-1" />
+          </div>
+        ))}
+      </div>
+    ),
+  },
+}
+
 /** One line, for a section of a list or a panel. */
 export const Inline: Story = {
   args: { size: 'inline', status: 'error', errorTitle: "Couldn't load members" },
@@ -64,6 +81,18 @@ export const ErrorTest: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }))
     await expect(args.onRetry).toHaveBeenCalledOnce()
     await expect(canvas.queryByText(/are running/)).toBeNull()
+  },
+}
+
+/** Test for the skeleton: hidden from the sidebar and docs. Tests run with reduced motion, so it pulses. */
+export const LoadingSkeletonTest: Story = {
+  ...LoadingSkeleton,
+  name: 'Loading skeleton (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas, canvasElement }) => {
+    await expect(canvas.getByRole('status')).toHaveTextContent('Loading')
+    const block = canvasElement.querySelector<HTMLElement>('[aria-hidden] div, [aria-hidden].rounded-full')!
+    await expect(getComputedStyle(block).animationName).toBe('pulse')
   },
 }
 

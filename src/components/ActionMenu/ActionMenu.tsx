@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode } from 'react'
 import type { Key } from 'react-aria-components'
-import { Ellipsis } from 'lucide-react'
+import { ChevronDown, Ellipsis } from 'lucide-react'
 import { useStrings } from '../../lib/strings'
-import { IconButton, type ButtonSize } from '../Button/Button'
+import { Button, IconButton, type ButtonSize } from '../Button/Button'
 import { Menu, MenuItem, MenuSeparator, MenuTrigger, SubmenuTrigger, type MenuProps } from '../Menu/Menu'
 
 export interface ActionMenuItem {
@@ -43,8 +43,13 @@ export interface ActionMenuProps extends Pick<MenuProps<object>, 'placement' | '
    */
   selectedId?: string
   onSelect?: (id: string) => void
-  /** The button that opens the menu. Default: a "⋯" icon button. */
+  /**
+   * The button that opens the menu. Default: a "⋯" icon button, or for a picker a button showing the current
+   * choice with a dropdown arrow.
+   */
   trigger?: ReactElement
+  /** Icon before the current choice on a picker's default button. */
+  triggerIcon?: ReactNode
   /** Size of the default trigger. */
   size?: ButtonSize
   isDisabled?: boolean
@@ -63,6 +68,7 @@ export function ActionMenu({
   selectedId,
   onSelect,
   trigger,
+  triggerIcon,
   size = 'md',
   isDisabled,
   placement = 'bottom end',
@@ -71,13 +77,22 @@ export function ActionMenu({
   const strings = useStrings()
   const label = ariaLabel ?? strings.moreActions
   const picker = selectedId !== undefined || onSelect !== undefined
+  const current = picker ? findItem(items, selectedId) : undefined
   return (
     <MenuTrigger>
-      {trigger ?? (
-        <IconButton aria-label={label} size={size} isDisabled={isDisabled}>
-          <Ellipsis />
-        </IconButton>
-      )}
+      {trigger ??
+        (picker ? (
+          // Visible text is the current choice; the menu's name comes first so "Sort by, Last updated" is read
+          <Button variant="secondary" size={size} isDisabled={isDisabled} aria-label={current ? `${label}, ${current.label}` : label}>
+            {triggerIcon}
+            {current?.label ?? label}
+            <ChevronDown className="text-muted" />
+          </Button>
+        ) : (
+          <IconButton aria-label={label} size={size} isDisabled={isDisabled}>
+            <Ellipsis />
+          </IconButton>
+        ))}
       <ActionMenuList
         {...menuProps}
         aria-label={label}
@@ -88,6 +103,15 @@ export function ActionMenu({
       />
     </MenuTrigger>
   )
+}
+
+function findItem(entries: readonly ActionMenuEntry[], id: string | undefined): ActionMenuItem | undefined {
+  for (const e of entries) {
+    if (e === 'separator') continue
+    if (e.id === id) return e
+    const inner = e.items && findItem(e.items, id)
+    if (inner) return inner
+  }
 }
 
 interface ActionMenuListProps extends Pick<ActionMenuProps, 'placement' | 'header' | 'footer' | 'searchable' | 'sheetTitle' | 'onAction'> {

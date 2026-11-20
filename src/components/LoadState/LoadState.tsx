@@ -4,15 +4,20 @@ import { cx } from '../../lib/cx'
 import { useStrings } from '../../lib/strings'
 import { Button } from '../Button/Button'
 import { EmptyState } from '../EmptyState/EmptyState'
-import { Spinner } from '../Loading/Loading'
+import { Skeleton, Spinner } from '../Loading/Loading'
 
 export type LoadStatus = 'loading' | 'empty' | 'error' | 'ready'
 
 export interface LoadStateProps {
   /** Where the data is. `ready` shows `children`; the others stand in for it. */
   status: LoadStatus
-  /** Shown while loading, next to the spinner. Default "Loading". */
+  /** Shown while loading, next to the spinner. With `skeleton` it is read by screen readers only. Default "Loading". */
   loadingLabel?: ReactNode
+  /**
+   * Shimmering placeholders instead of the spinner while loading, for content whose shape is known (a list, a card,
+   * a table). `true` shows a few text lines; pass Skeleton blocks laid out like the content for a closer match.
+   */
+  skeleton?: boolean | ReactNode
   /** Title when there is nothing to show, e.g. "No servers yet". */
   emptyTitle?: ReactNode
   emptyDescription?: ReactNode
@@ -43,6 +48,7 @@ export interface LoadStateProps {
 export function LoadState({
   status,
   loadingLabel,
+  skeleton,
   emptyTitle,
   emptyDescription,
   emptyActions,
@@ -63,6 +69,14 @@ export function LoadState({
       {strings.retry}
     </Button>
   )
+
+  if (status === 'loading' && skeleton)
+    return (
+      <div role="status" className={className}>
+        <span className="sr-only">{loadingLabel ?? strings.loading}</span>
+        {skeleton === true ? <Skeleton lines={3} /> : skeleton}
+      </div>
+    )
 
   if (status === 'loading')
     return (

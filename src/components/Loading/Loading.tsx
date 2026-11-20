@@ -35,17 +35,24 @@ export interface SkeletonProps {
   lines?: number
   /** Round placeholder, e.g. for an avatar. Give it a `size-*`. */
   circle?: boolean
+  /** `shimmer` (default) sweeps a soft band across; `pulse` fades in and out. Both pulse under reduced motion. */
+  animation?: 'shimmer' | 'pulse'
+}
+
+const fill = {
+  shimmer: 'skeleton-shimmer motion-safe:animate-shimmer motion-reduce:animate-pulse',
+  pulse: 'bg-track motion-safe:animate-pulse',
 }
 
 /** Placeholder block shown while content loads. Hidden from screen readers. */
-export function Skeleton({ className, lines, circle }: SkeletonProps) {
+export function Skeleton({ className, lines, circle, animation = 'shimmer' }: SkeletonProps) {
   if (lines && lines > 0) {
     return (
       <div aria-hidden className={cx('flex flex-col gap-2', className)}>
         {Array.from({ length: lines }, (_, i) => (
           <div
             key={i}
-            className={cx('h-3 rounded-sm bg-track motion-safe:animate-pulse', i === lines - 1 && lines > 1 ? 'w-2/3' : 'w-full')}
+            className={cx('h-3 rounded-sm', fill[animation], i === lines - 1 && lines > 1 ? 'w-2/3' : 'w-full')}
           />
         ))}
       </div>
@@ -54,7 +61,7 @@ export function Skeleton({ className, lines, circle }: SkeletonProps) {
   return (
     <div
       aria-hidden
-      className={cx('h-4 bg-track motion-safe:animate-pulse', circle ? 'size-10 rounded-full' : 'rounded-sm', className)}
+      className={cx('h-4', fill[animation], circle ? 'size-10 rounded-full' : 'rounded-sm', className)}
     />
   )
 }

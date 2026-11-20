@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { ArrowDownUp, Copy, Download, FolderInput, Pencil, Trash2 } from 'lucide-react'
 import { expect, fn, screen, waitFor, within } from 'storybook/test'
-import { Button } from '../Button/Button'
 import { ActionMenu, type ActionMenuEntry } from './ActionMenu'
 
 const items: ActionMenuEntry[] = [
@@ -43,7 +42,7 @@ type Story = StoryObj<typeof meta>
 
 export const Main: Story = { name: 'ActionMenu' }
 
-/** A picker: one row is the current choice. Your own trigger replaces the "⋯" button. */
+/** A picker: the button shows the current choice with a dropdown arrow, and the menu checks it. */
 export const Picker: Story = {
   args: {
     'aria-label': 'Sort by',
@@ -55,21 +54,7 @@ export const Picker: Story = {
   },
   render: function Render(args) {
     const [sort, setSort] = useState('updated')
-    const label = args.items.find((i) => i !== 'separator' && i.id === sort)
-    return (
-      <ActionMenu
-        {...args}
-        placement="bottom start"
-        selectedId={sort}
-        onSelect={setSort}
-        trigger={
-          <Button variant="secondary">
-            <ArrowDownUp />
-            {label !== 'separator' && label?.label}
-          </Button>
-        }
-      />
-    )
+    return <ActionMenu {...args} placement="bottom start" selectedId={sort} onSelect={setSort} triggerIcon={<ArrowDownUp />} />
   },
 }
 
@@ -94,10 +79,10 @@ export const PickerTest: Story = {
   name: 'Picker (test)',
   tags: ['!dev', '!autodocs'],
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: /Last updated/ }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Sort by, Last updated' }))
     const menu = await screen.findByRole('menu')
     await expect(within(menu).getByRole('menuitemradio', { name: 'Last updated' })).toHaveAttribute('aria-checked', 'true')
     await userEvent.click(within(menu).getByRole('menuitemradio', { name: 'Size' }))
-    await waitFor(() => expect(canvas.getByRole('button', { name: /Size/ })).toBeVisible())
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Sort by, Size' })).toBeVisible())
   },
 }
