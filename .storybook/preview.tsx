@@ -2,17 +2,17 @@ import { DocsContainer, type DocsContainerProps } from '@storybook/addon-docs/bl
 import type { Decorator, Preview } from '@storybook/react-vite'
 import { useEffect, useState, type PropsWithChildren } from 'react'
 import { GLOBALS_UPDATED } from 'storybook/internal/core-events'
-import { create } from 'storybook/theming'
 import { RouterProvider } from 'react-aria-components'
 import '../src/styles/fonts.css'
 import '../src/styles/index.css'
 import './preview.css'
+import { applyTheme, storybookTheme } from './themes'
 
 /** Sets data-theme on <html> so portals (menus, modals) pick up the theme too. */
 const ThemeRoot = ({ theme, children }: PropsWithChildren<{ theme: string }>) => {
   useEffect(() => {
     if (theme === 'side-by-side') return
-    document.documentElement.dataset.theme = theme
+    applyTheme(theme)
   }, [theme])
   return children
 }
@@ -23,45 +23,20 @@ const withTheme: Decorator = (Story, { globals, parameters }) => (
   </ThemeRoot>
 )
 
-/** Storybook's own docs chrome (prose, code blocks, arg tables), matched to our tokens. */
-const docsThemes = {
-  light: create({
-    base: 'light',
-    appBg: '#f3f1ea',
-    appContentBg: '#faf9f5',
-    appPreviewBg: '#faf9f5',
-    appBorderColor: '#e8e4d8',
-    textColor: '#29261b',
-    textMutedColor: '#5f5b4e',
-  }),
-  dark: create({
-    base: 'dark',
-    appBg: '#1f1e1d',
-    appContentBg: '#262624',
-    appPreviewBg: '#262624',
-    appBorderColor: '#3e3d39',
-    textColor: '#ece9e1',
-    textMutedColor: '#bcb7aa',
-  }),
-}
-
 /** Docs pages don't run decorators for their prose, so follow the toolbar theme here. */
 const ThemedDocsContainer = ({ context, children }: PropsWithChildren<DocsContainerProps>) => {
   // `store` isn't on the public DocsContextProps type, but it is on the runtime DocsContext.
   const initial = (context as unknown as { store: { userGlobals: { globals: { theme?: string } } } }).store
     .userGlobals.globals.theme
-  const [theme, setTheme] = useState(initial === 'dark' ? 'dark' : 'light')
+  const [theme, setTheme] = useState(initial ?? 'light')
   useEffect(() => {
-    const onGlobals = ({ globals }: { globals: { theme?: string } }) =>
-      setTheme(globals.theme === 'dark' ? 'dark' : 'light')
+    const onGlobals = ({ globals }: { globals: { theme?: string } }) => setTheme(globals.theme ?? 'light')
     context.channel.on(GLOBALS_UPDATED, onGlobals)
     return () => context.channel.off(GLOBALS_UPDATED, onGlobals)
   }, [context.channel])
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-  }, [theme])
+  useEffect(() => applyTheme(theme), [theme])
   return (
-    <DocsContainer context={context} theme={docsThemes[theme as 'light' | 'dark']}>
+    <DocsContainer context={context} theme={storybookTheme(theme)}>
       {children}
     </DocsContainer>
   )
@@ -94,6 +69,7 @@ const preview: Preview = {
         items: [
           { value: 'light', title: 'Light', icon: 'sun' },
           { value: 'dark', title: 'Dark', icon: 'moon' },
+          { value: 'system', title: 'System', icon: 'browser' },
         ],
         dynamicTitle: true,
       },

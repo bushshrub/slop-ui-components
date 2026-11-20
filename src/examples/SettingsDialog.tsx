@@ -19,7 +19,7 @@ const languages = [
 ]
 
 const chatFonts = [
-  { id: 'sans', label: 'Default · Sans' },
+  { id: 'sans', label: 'Sans (default)' },
   { id: 'serif', label: 'Serif' },
   { id: 'mono', label: 'Mono' },
 ]
@@ -38,7 +38,15 @@ const timeZones = ['America/Los_Angeles', 'America/New_York', 'Europe/London', '
  * Example composition, not a library export: a settings dialog built from Modal (`flush`), side
  * Tabs, and the input components. Settings apply as they change, so there is no Save button.
  */
-export function SettingsDialog(props: Omit<ModalProps, 'title' | 'children'>) {
+export type ThemeChoice = 'light' | 'dark' | 'system'
+
+export interface SettingsDialogProps extends Omit<ModalProps, 'title' | 'children'> {
+  /** The app's theme; the Theme control shows and changes it. */
+  theme?: ThemeChoice
+  onThemeChange?: (theme: ThemeChoice) => void
+}
+
+export function SettingsDialog({ theme, onThemeChange, ...props }: SettingsDialogProps) {
   return (
     <Modal {...props} title="Settings" size="xl" flush className="md:h-[min(44rem,85dvh)]">
       <Tabs orientation="vertical" defaultSelectedKey="general" className="flex-1 md:border-t md:border-divider">
@@ -66,7 +74,9 @@ export function SettingsDialog(props: Omit<ModalProps, 'title' | 'children'>) {
           <SettingsRow label="Theme">
             <SegmentedControl
               aria-label="Theme"
+              value={theme}
               defaultValue="system"
+              onChange={onThemeChange}
               options={[
                 { id: 'light', label: 'Light', icon: <Sun /> },
                 { id: 'dark', label: 'Dark', icon: <Moon /> },

@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useGlobals } from 'storybook/preview-api'
 import { expect, screen, waitFor, within } from 'storybook/test'
 import { Button } from '../components/Button/Button'
 import { DialogTrigger } from '../components/Modal/Modal'
-import { SettingsDialog } from './SettingsDialog'
+import { SettingsDialog, type ThemeChoice } from './SettingsDialog'
 
 const meta = {
   title: 'Examples/Settings dialog',
@@ -17,12 +18,16 @@ const meta = {
       story: { inline: false, height: '640px' },
     },
   },
-  render: () => (
-    <DialogTrigger>
-      <Button>Settings</Button>
-      <SettingsDialog />
-    </DialogTrigger>
-  ),
+  // The Theme control drives Storybook's toolbar theme, and the toolbar drives it back
+  render: function Render() {
+    const [{ theme }, updateGlobals] = useGlobals()
+    return (
+      <DialogTrigger>
+        <Button>Settings</Button>
+        <SettingsDialog theme={theme as ThemeChoice} onThemeChange={(next) => updateGlobals({ theme: next })} />
+      </DialogTrigger>
+    )
+  },
 } satisfies Meta
 
 export default meta
