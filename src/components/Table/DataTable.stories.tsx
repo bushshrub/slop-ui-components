@@ -190,6 +190,7 @@ export const PhoneCards: Story = {
     columns: columns.map((c) => (c.id === 'id' ? { ...c, hideOnPhone: true } : c)),
   },
   globals: { viewport: { value: 'mobile1' } },
+  parameters: { layout: 'padded' },
 }
 
 /** Test for phone cards: hidden from the sidebar and docs. */

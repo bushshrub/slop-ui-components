@@ -6,8 +6,9 @@ export interface DescriptionListProps {
    * - `columns` (default): labels in a column on the left, sized to the longest one, values beside them. Under
    *   640px each label sits above its value.
    * - `stacked`: every label above its value, for narrow panels.
+   * - `inline`: labels and values side by side at every width, for short values in a small space (a card).
    */
-  layout?: 'columns' | 'stacked'
+  layout?: 'columns' | 'stacked' | 'inline'
   /** A hairline between items. */
   divided?: boolean
   className?: string
@@ -24,7 +25,11 @@ export function DescriptionList({ layout = 'columns', divided, className, childr
       data-layout={layout}
       className={cx(
         'group/dl m-0 grid text-ui',
-        layout === 'columns' ? 'grid-cols-1 sm:grid-cols-[minmax(0,max-content)_minmax(0,1fr)] sm:gap-x-6' : 'grid-cols-1',
+        layout === 'columns'
+          ? 'grid-cols-1 sm:grid-cols-[minmax(0,max-content)_minmax(0,1fr)] sm:gap-x-6'
+          : layout === 'inline'
+            ? 'grid-cols-[minmax(0,max-content)_minmax(0,1fr)] gap-x-4'
+            : 'grid-cols-1',
         divided ? '[&>div]:py-2 [&>div:not(:last-child)]:border-b [&>div]:border-divider' : 'gap-y-2.5',
         className,
       )}

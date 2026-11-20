@@ -261,15 +261,11 @@ export interface DataTableProps<T> extends Omit<TableProps, 'children'> {
    * `virtualized`.
    */
   phoneLayout?: 'table' | 'cards'
-  /** Ids of the columns the user has hidden. Keep it in step with the `ColumnVisibilityMenu` next to the table. */
-  hiddenColumns?: Iterable<Key>
-  /** Columns hidden at first, when `hiddenColumns` is not given. */
-  defaultHiddenColumns?: Iterable<Key>
   /**
-   * Accepted for the controlled pattern, but the table never changes its own columns: the `ColumnVisibilityMenu`
-   * calls its own `onHiddenColumnsChange`. Not called by the table.
+   * Ids of the columns to leave out. To let people choose, keep the set in state and pass it here and to a
+   * `ColumnVisibilityMenu` next to the table.
    */
-  onHiddenColumnsChange?: (keys: Set<Key>) => void
+  hiddenColumns?: Iterable<Key>
 }
 
 /** A column is hidden when it is in the set and the column allows hiding. */
@@ -300,12 +296,10 @@ export function DataTable<T>({
   className,
   phoneLayout = 'table',
   hiddenColumns,
-  defaultHiddenColumns,
-  onHiddenColumnsChange: _onHiddenColumnsChange,
   ...props
 }: DataTableProps<T>) {
   const phone = useMediaQuery(PHONE_QUERY)
-  const hidden = new Set(hiddenColumns ?? defaultHiddenColumns)
+  const hidden = new Set(hiddenColumns)
   const shown = columns.filter((c) => !isColumnHidden(c, hidden) && !(phone && c.hideOnPhone))
   if (phone && phoneLayout === 'cards' && !rowHref && shown.length > 0)
     return (
@@ -393,7 +387,7 @@ function DataTableCards<T>({ columns, rows, rowKey, onRowPress, emptyState, ...p
       onSelectionChange={props.onSelectionChange}
       disabledKeys={props.disabledKeys}
       renderEmptyState={emptyState ? () => emptyState : undefined}
-      className="gap-3"
+      className="flex w-full flex-col gap-3 outline-none"
     >
       {rows.map((row) => {
         const titleText = title.cell(row)
@@ -403,11 +397,15 @@ function DataTableCards<T>({ columns, rows, rowKey, onRowPress, emptyState, ...p
             id={rowKey(row)}
             textValue={typeof titleText === 'string' ? titleText : undefined}
             onAction={onRowPress && (() => onRowPress(row))}
-            className="flex-col items-stretch gap-2 border-border bg-surface p-3"
+            className={cx(
+              'flex flex-col items-stretch gap-2 rounded-md border border-border bg-surface p-3 text-ui text-fg outline-none',
+              'focus-visible:ring-2 focus-visible:ring-focus data-selected:border-interactive data-disabled:opacity-50',
+              onRowPress && 'cursor-default data-hovered:bg-hover data-pressed:bg-selected',
+            )}
           >
             <div className="min-w-0 font-medium">{titleText}</div>
             {fields.length > 0 && (
-              <DescriptionList layout="stacked">
+              <DescriptionList layout="inline">
                 {fields.map((c) => (
                   <DescriptionItem key={c.id} label={c.header} mono={c.mono} numeric={c.numeric}>
                     {c.cell(row)}
