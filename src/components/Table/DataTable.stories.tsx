@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useState } from 'react'
+import type { Key } from 'react-aria-components'
 import { expect, fn, within } from 'storybook/test'
 import { Badge } from '../Badge/Badge'
-import { DataTable, type DataTableColumn } from './Table'
+import { ColumnVisibilityMenu, DataTable, type DataTableColumn, type DataTableProps } from './Table'
 
 interface Server {
   id: string
@@ -175,5 +177,75 @@ export const FitTest: Story = {
   play: async ({ canvas }) => {
     const table = canvas.getByRole('grid')
     await expect(table.getBoundingClientRect().width).toBeLessThanOrEqual(table.parentElement!.getBoundingClientRect().width)
+  },
+}
+
+/**
+ * `phoneLayout="cards"`: below 768px each row is a card. The first shown column is its title and the other shown
+ * columns are label and value pairs. Above 768px it is the usual table.
+ */
+export const PhoneCards: Story = {
+  args: {
+    phoneLayout: 'cards',
+    columns: columns.map((c) => (c.id === 'id' ? { ...c, hideOnPhone: true } : c)),
+  },
+  globals: { viewport: { value: 'mobile1' } },
+}
+
+/** Test for phone cards: hidden from the sidebar and docs. */
+export const PhoneCardsTest: Story = {
+  ...PhoneCards,
+  name: 'Phone cards (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ args, canvas, userEvent }) => {
+    const grid = canvas.getByRole('grid')
+    await expect(canvas.queryByRole('columnheader')).toBeNull()
+    await expect(within(grid).getAllByRole('row')).toHaveLength(servers.length)
+    const card = within(grid).getByRole('row', { name: /Ipsum/ })
+    await expect(within(card).getByText('Region')).toBeVisible()
+    await expect(within(card).getByText('us-east')).toBeVisible()
+    await expect(within(card).getByText('Memory (MB)')).toBeVisible()
+    await expect(within(card).getByText('2,048')).toBeVisible()
+    await userEvent.click(card)
+    await expect(args.onRowPress).toHaveBeenCalledWith(servers[1])
+  },
+}
+
+function ColumnVisibilityExample(args: DataTableProps<Server>) {
+  const [hidden, setHidden] = useState<Set<Key>>(() => new Set(['id', 'memory']))
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex justify-end">
+        <ColumnVisibilityMenu columns={columns} hiddenColumns={hidden} onHiddenColumnsChange={setHidden} />
+      </div>
+      <DataTable {...args} hiddenColumns={hidden} />
+    </div>
+  )
+}
+
+/**
+ * `ColumnVisibilityMenu` above the table. The Columns button opens a checklist; unchecking a column hides it. The
+ * last visible column cannot be unchecked, and a column with `canHide: false` stays put.
+ */
+export const ColumnVisibility: Story = {
+  render: (args) => <ColumnVisibilityExample {...args} />,
+}
+
+/** Test for column visibility: hidden from the sidebar and docs. */
+export const ColumnVisibilityTest: Story = {
+  ...ColumnVisibility,
+  name: 'Column visibility (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas, userEvent }) => {
+    const page = within(document.body)
+    await userEvent.click(canvas.getByRole('button', { name: 'Columns' }))
+    await userEvent.click(page.getByRole('menuitemcheckbox', { name: 'Region' }))
+    await expect(canvas.queryByRole('columnheader', { name: 'Region' })).toBeNull()
+    await userEvent.click(page.getByRole('menuitemcheckbox', { name: 'Status' }))
+    await expect(canvas.queryByRole('columnheader', { name: 'Status' })).toBeNull()
+    // Name is now the only visible column: it stays checked and cannot be unchecked
+    await expect(page.getByRole('menuitemcheckbox', { name: 'Name' })).toHaveAttribute('aria-disabled', 'true')
+    await userEvent.click(page.getByRole('menuitemcheckbox', { name: 'Name' }))
+    await expect(canvas.getByRole('columnheader', { name: 'Name' })).toBeVisible()
   },
 }

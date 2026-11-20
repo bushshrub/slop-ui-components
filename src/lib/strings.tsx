@@ -103,6 +103,9 @@ export const defaultStrings = {
   usage: 'Usage',
   valueOfMax: (value: string, max: string) => `${value} of ${max}`,
 
+  // Table
+  columns: 'Columns',
+
   // File drop
   files: 'Files',
   attach: 'Attach',
