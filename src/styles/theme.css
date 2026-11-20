@@ -141,6 +141,25 @@
   background-size: 300% 100%;
 }
 
+/* Text in the muted colour with a brighter band passing through it (animate with animate-shimmer).
+   Forced colours drop the gradient so the text stays in the system text colour. */
+@utility shimmer-text {
+  color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    var(--ui-muted) 40%,
+    var(--ui-fg) 50%,
+    var(--ui-muted) 60%
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  @media (forced-colors: active) {
+    color: CanvasText;
+    background-image: none;
+  }
+}
+
 @layer base {
   body {
     background: var(--ui-bg);

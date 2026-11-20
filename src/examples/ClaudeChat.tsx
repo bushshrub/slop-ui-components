@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowUp, AudioLines, Briefcase, ChevronDown, Clock, Code, FileText, Folder, Ghost, MessageCircle, Mic, Plus, Search, Shapes, Share } from 'lucide-react'
 import { Button as AriaButton } from 'react-aria-components'
 import { Button, IconButton } from '../components/Button/Button'
+import { ShimmerText } from '../components/Loading/Loading'
 import { AppShell, Sidebar, SidebarItem, SidebarSection, SidebarUser } from '../components/Sidebar/Sidebar'
 import { AccountMenu } from './AccountMenu'
 import { ComposerInput, MessageActions, ModelMenu, composerBoxClass } from './ChatParts'
@@ -30,6 +31,10 @@ export interface ClaudeChatProps {
   messages?: Message[]
   /** Force the phone layout (for stories and tests). */
   forceDrawer?: boolean
+  /** Status shown under the last message while the reply is on its way, e.g. "Thinking". */
+  thinking?: string
+  /** The last answer is still arriving: its actions stay hidden until it is done. */
+  streaming?: boolean
   onSend?: (text: string) => void
   onAction?: (key: string) => void
 }
@@ -39,7 +44,12 @@ export interface ClaudeChatProps {
  * tokens. A serif greeting, a card composer with the project and model pickers on a line under it, and recent
  * artifacts below; answers are set in the serif font.
  */
-export function ClaudeChat({ messages = [], forceDrawer, onSend, onAction }: ClaudeChatProps) {
+export function ClaudeChat({ messages = [], forceDrawer, thinking, streaming, onSend, onAction }: ClaudeChatProps) {
+  // Keep the newest text in view as the reply grows
+  const end = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (streaming || thinking) end.current?.scrollIntoView({ block: 'end' })
+  }, [messages, thinking, streaming])
   const [text, setText] = useState('')
   const [model, setModel] = useState(models[1].id)
   const send = () => {
@@ -158,7 +168,7 @@ export function ClaudeChat({ messages = [], forceDrawer, onSend, onAction }: Cla
         ) : (
           <>
             <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-4">
-              {messages.map((m) =>
+              {messages.map((m, i) =>
                 m.role === 'user' ? (
                   <div key={m.id} className="max-w-[85%] self-end rounded-xl bg-button px-4 py-2.5 text-ui leading-6 text-fg">
                     {m.text.join('\n\n')}
@@ -168,10 +178,20 @@ export function ClaudeChat({ messages = [], forceDrawer, onSend, onAction }: Cla
                     <div className="flex flex-col gap-3 font-serif text-base leading-7 text-fg">
                       {m.text.map((p) => <p key={p}>{p}</p>)}
                     </div>
-                    <MessageActions onAction={onAction} />
+                    {!(streaming && i === messages.length - 1) && <MessageActions onAction={onAction} />}
                   </div>
                 ),
               )}
+              {/* Live region, so screen readers hear the status come and go */}
+              <div role="status" className="flex min-h-7 items-center gap-2.5">
+                {thinking && (
+                  <>
+                    <Sparkle className="size-5" />
+                    <ShimmerText className="text-ui">{thinking}</ShimmerText>
+                  </>
+                )}
+              </div>
+              <div ref={end} />
             </div>
             <div className="sticky bottom-0 flex flex-col items-center bg-bg px-4 pt-1">
               {composer}
@@ -185,9 +205,9 @@ export function ClaudeChat({ messages = [], forceDrawer, onSend, onAction }: Cla
 }
 
 /** Many-pointed spark in the accent color, next to the greeting. */
-function Sparkle() {
+function Sparkle({ className = 'size-8 max-md:size-6' }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true" className="size-8 shrink-0 text-accent max-md:size-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true" className={`shrink-0 text-accent ${className}`}>
       <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4M8.5 3.7l7 16.6M15.5 3.7l-7 16.6M3.7 8.5l16.6 7M3.7 15.5l16.6-7" />
     </svg>
   )

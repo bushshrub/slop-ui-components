@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect } from 'storybook/test'
 import { Button } from '../Button/Button'
-import { Skeleton, Spinner } from './Loading'
+import { ShimmerText, Skeleton, Spinner } from './Loading'
 
 const meta = {
   title: 'Components/Feedback/Loading',
@@ -11,7 +11,8 @@ const meta = {
     docs: {
       description: {
         component:
-          '`Spinner` for short waits, `Skeleton` to hold the shape of content that is still loading. Skeletons shimmer; ' +
+          '`Spinner` for short waits, `Skeleton` to hold the shape of content that is still loading, `ShimmerText` for ' +
+          'named work in progress ("Thinking"). Skeletons shimmer; ' +
           'pass `animation="pulse"` for a fade instead. Under reduced motion both fade in place.',
       },
     },
@@ -22,6 +23,30 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = { args: { size: 'md' } }
+
+/** Named work in progress, like an assistant thinking or a tool running. Takes the size of the text around it. */
+export const Shimmer: Story = {
+  render: () => (
+    <div className="flex flex-col gap-3 text-ui">
+      <ShimmerText>Thinking</ShimmerText>
+      <ShimmerText>Searching 12 sources</ShimmerText>
+      <ShimmerText className="font-serif text-lg">Writing the report</ShimmerText>
+    </div>
+  ),
+}
+
+/** Test for ShimmerText: hidden from the sidebar and docs. Tests run with reduced motion, so it pulses. */
+export const ShimmerTest: Story = {
+  ...Shimmer,
+  name: 'Shimmer (test)',
+  tags: ['!dev', '!autodocs'],
+  play: async ({ canvas }) => {
+    const text = canvas.getByText('Thinking')
+    await expect(getComputedStyle(text).animationName).toBe('pulse')
+    // The colour comes from the clipped gradient, so the text itself is transparent
+    await expect(getComputedStyle(text).backgroundClip).toBe('text')
+  },
+}
 
 /** Compose a Spinner into a disabled Button while saving. */
 export const InButton: Story = {
