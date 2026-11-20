@@ -54,20 +54,25 @@ export interface PageHeaderProps {
   count?: ReactNode
   /** Buttons aligned to the right of the title. */
   actions?: ReactNode
+  /** A row under the title for search and filters. Wraps on narrow screens. */
+  filters?: ReactNode
   className?: string
 }
 
 /** Page title with optional description and right-aligned actions. */
-export function PageHeader({ title, description, count, actions, className }: PageHeaderProps) {
+export function PageHeader({ title, description, count, actions, filters, className }: PageHeaderProps) {
   return (
-    <header className={cx('flex flex-wrap items-end justify-between gap-x-6 gap-y-3', className)}>
-      <div className="min-w-0">
-        <Heading variant="page" count={count}>
-          {title}
-        </Heading>
-        {description && <p className="mt-1.5 mb-0 text-ui text-muted">{description}</p>}
+    <header className={cx('flex flex-col gap-4', className)}>
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <Heading variant="page" count={count}>
+            {title}
+          </Heading>
+          {description && <p className="mt-1.5 mb-0 text-ui text-muted">{description}</p>}
+        </div>
+        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {filters && <div className="flex flex-wrap items-center gap-2">{filters}</div>}
     </header>
   )
 }

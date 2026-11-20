@@ -26,6 +26,10 @@ export const defaultStrings = {
   remove: (name: string) => `Remove ${name}`,
   showPassword: 'Show password',
   hidePassword: 'Hide password',
+  copy: 'Copy',
+  copied: 'Copied',
+  show: 'Show',
+  hide: 'Hide',
 
   // Toast
   notifications: 'Notifications',

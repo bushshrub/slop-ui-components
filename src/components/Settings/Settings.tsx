@@ -8,19 +8,24 @@ export interface SettingsGroupProps {
   description?: ReactNode
   /** Buttons at the right of the heading, e.g. Add or Save. */
   actions?: ReactNode
+  /** Heading level of the title. Default 3; use 2 when the groups sit right under a page title. */
+  headingLevel?: 2 | 3 | 4
+  /** For linking to the group, e.g. from a `SectionRail`. */
+  id?: string
   className?: string
   /** `SettingsRow`s, or anything else that should sit between the hairlines. */
   children: ReactNode
 }
 
 /** Column of settings split by hairlines, with the same spacing everywhere. */
-export function SettingsGroup({ title, description, actions, className, children }: SettingsGroupProps) {
+export function SettingsGroup({ title, description, actions, headingLevel = 3, id, className, children }: SettingsGroupProps) {
+  const H = `h${headingLevel}` as const
   return (
-    <section className={cx('flex flex-col font-sans text-fg', className)}>
+    <section id={id} className={cx('flex flex-col font-sans text-fg', className)}>
       {(title || description || actions) && (
         <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 pb-2">
           <div className="flex min-w-0 flex-col gap-0.5">
-            {title && <h3 className="m-0 text-ui leading-5 font-medium">{title}</h3>}
+            {title && <H className="m-0 text-ui leading-5 font-medium">{title}</H>}
             {description && <p className="m-0 text-ui-sm leading-4 text-muted">{description}</p>}
           </div>
           {actions && <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>}
